@@ -1,0 +1,25 @@
+import { useState } from "react";
+import { LineChart } from "../components/Charts";
+import { Button, Card, Metrics, Modal, Notice, PageHeading, SelectField } from "../components/ui";
+import { recommendations } from "../data/campaigns-demo";
+import "./flows.css";
+
+export default function Simulation({ optionId, onBack }: { optionId: string; onBack: () => void }) {
+  const option = recommendations.find(item => item.id === optionId) ?? recommendations[0];
+  const [period, setPeriod] = useState("14–20 Sep 2026");
+  const [outlet, setOutlet] = useState("Semua 3 outlet");
+  const initialOffer = option.id === "A" ? "Kopi + pastri · Diskon 15%" : option.id === "B" ? "Poin loyalitas 2×" : "Diskon 20%";
+  const [offer, setOffer] = useState(initialOffer);
+  const [hours, setHours] = useState("14.00–17.00");
+  const [confirm, setConfirm] = useState(false);
+  const changed = period !== "14–20 Sep 2026" || outlet !== "Semua 3 outlet" || offer !== initialOffer || hours !== "14.00–17.00";
+  const valid = option.id === "A" && !changed;
+  return <><PageHeading title="Simulasikan sebelum menyetujui" subtitle={option.title}><Button onClick={onBack}>Kembali ke Chat AI</Button></PageHeading><Notice>{changed ? "Parameter berubah. API simulasi belum tersedia; proyeksi belum dihitung ulang." : "Demo / simulasi · Tinjau proyeksi ilustrasi sebelum mengambil keputusan."}</Notice>
+    <Card><div className="simulation-fields"><SelectField label="Periode promo" value={period} options={["14–20 Sep 2026", "14–27 Sep 2026"]} onChange={setPeriod} /><SelectField label="Outlet sasaran" value={outlet} options={["Semua 3 outlet", "Pusat Kota", "Kampus", "Riverside"]} onChange={setOutlet} /><SelectField label="Penawaran" value={offer} options={[...new Set([initialOffer, "Kopi + pastri · Diskon 10%", "Kopi + pastri · Diskon 20%"])]} onChange={setOffer} /><SelectField label="Jam" value={hours} options={["14.00–17.00", "14.00–16.00", "16.00–18.00"]} onChange={setHours} /></div></Card>
+    <Metrics items={[{ label: "Proyeksi pendapatan", value: valid ? option.revenue : "Belum tersedia", note: valid ? "↗ +15,0% dari acuan ilustrasi" : "Memerlukan API simulasi" }, { label: "Pendapatan tambahan", value: valid ? option.additional : "Belum tersedia", note: valid ? "Kisaran Rp 2,9–4,5 jt · Ilustrasi" : "Belum dihitung" }, { label: "Proyeksi margin", value: changed ? "Belum tersedia" : option.margin, note: changed ? "Belum dihitung ulang" : option.id === "C" ? "Di bawah target contoh 60%" : "Target contoh 60%", tone: option.id === "C" ? "warning" : undefined }, { label: "Keyakinan", value: valid ? option.confidence : "Belum tersedia", note: valid ? "Ilustrasi 90 hari penjualan" : "Tidak ada model prediksi aktif" }]} />
+    {valid ? <LineChart title="Proyeksi vs pendapatan acuan" subtitle="14–20 September 2026 · Pendapatan sore · Juta rupiah · Ilustrasi" series="SimulationPrimarySeriesScaleBounds" secondary="SimulationMutedSeriesScaleBounds" labels={["14 Sep", "15 Sep", "16 Sep", "17 Sep", "18 Sep", "19 Sep", "20 Sep"]} max={6} legend="Proyeksi ilustrasi" /> : <Notice tone="warning">Grafik tidak ditampilkan karena proyeksi untuk parameter ini belum tersedia. Tidak ada kalkulasi bisnis atau tingkat keyakinan yang dibuat di browser.</Notice>}
+    <div className="two-columns"><Card title="Asumsi simulasi"><ul className="assumptions"><li>Harga menu dan jam buka tetap.</li><li>Stok pastri cukup untuk 70 paket per hari.</li><li>Kunjungan dan cuaca hari kerja normal.</li><li>Tidak ada promo diskon yang tumpang tindih.</li><li>Seluruh asumsi ini adalah contoh desain, belum diverifikasi.</li></ul></Card><Card title="Risiko dan batasan"><p className={option.id === "C" ? "warning" : "success"}>{option.risk} · Ilustrasi</p><p className="muted">Belum ada model prediksi, data penjualan, atau constraint gate yang terhubung. Hasil aktual dapat berbeda.</p></Card></div>
+    <Card title="Siap menjadwalkan promo ini?"><p className="muted">Jadwal dan persetujuan bisnis belum dapat disimpan. Tinjau ketentuan demo tanpa menjalankan aksi eksternal.</p><div className="actions"><Button variant="secondary" onClick={onBack}>Kembali ke chat</Button><Button onClick={() => setConfirm(true)}>Tinjau penjadwalan</Button></div></Card>
+    {confirm && <Modal title="Jadwalkan promo ini?" onClose={() => setConfirm(false)}><p className="muted">Tinjau ketentuan demo. Tidak ada promo yang akan dibuat.</p><div className="terms"><h2>{option.title}</h2>{[["Periode promo", period],["Outlet terpilih",outlet],["Penawaran",offer],["Jam",hours]].map(([label,value]) => <div key={label}><p className="caption muted">{label}</p><p>{value}</p></div>)}</div><p className="caption muted">Proyeksi margin</p><strong>{changed ? "Belum tersedia" : option.margin}</strong><Notice tone="warning">API campaign, autentikasi, dan approval belum tersedia. Penjadwalan dinonaktifkan, bukan dianggap berhasil.</Notice><div className="actions"><Button variant="secondary" onClick={() => setConfirm(false)}>Batal</Button><Button disabled>Konfirmasi Promo</Button></div></Modal>}
+  </>;
+}
