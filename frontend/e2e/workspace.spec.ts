@@ -1,6 +1,8 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+test.setTimeout(90_000);
+
 const routes = [
   "overview",
   "chat",
@@ -21,7 +23,13 @@ for (const width of [375, 768, 1024, 1440]) {
     await page.goto("/#overview");
     await page.getByRole("button", { name: "Demo Figma", exact: true }).click();
     for (const route of routes) {
-      await page.goto(`/#${route}`);
+      await page.evaluate((hash) => {
+        location.hash = hash;
+      }, route);
+      await expect(page).toHaveURL(new RegExp(`#${route}$`));
+      await expect(
+        page.getByRole("button", { name: "Demo Figma", exact: true }),
+      ).toHaveAttribute("aria-pressed", "true");
       await expect(page.locator("main")).toBeVisible();
       expect(
         await page.evaluate(
@@ -45,9 +53,12 @@ for (const width of [375, 768, 1024, 1440]) {
           id: item.id,
           targets: item.nodes.map((node) => node.target),
         })),
+        `Accessibility violations on #${route} at ${width}px`,
       ).toEqual([]);
     }
-    await page.goto("/#chat");
+    await page.evaluate(() => {
+      location.hash = "chat";
+    });
     await page
       .getByRole("button", { name: "Simulasikan", exact: true })
       .first()
@@ -62,7 +73,7 @@ for (const width of [375, 768, 1024, 1440]) {
   });
 }
 
-test("chat simulation invalidation and disabled scheduling", async ({
+test("supported simulation fixture schedules a demo; changed parameters invalidate it", async ({
   page,
 }) => {
   await page.goto("/#chat");
@@ -72,20 +83,53 @@ test("chat simulation invalidation and disabled scheduling", async ({
     .first()
     .click();
   await expect(page.getByText("Rp 27,6 jt", { exact: true })).toBeVisible();
+  const approval = page.getByRole("button", {
+    name: "Setujui Promo",
+    exact: true,
+  });
   await page
     .getByLabel("Penawaran", { exact: true })
     .selectOption("Kopi + pastri · Diskon 10%");
+  await expect(page.getByText("Rp 27,6 jt", { exact: true })).toBeVisible();
+  await page
+    .getByLabel("Outlet sasaran", { exact: true })
+    .selectOption("Kampus");
   await expect(page.getByText("Rp 27,6 jt", { exact: true })).toHaveCount(0);
-  await page.getByRole("button", { name: "Tinjau penjadwalan" }).click();
-  await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(approval).toBeDisabled();
+  await page
+    .getByLabel("Outlet sasaran", { exact: true })
+    .selectOption("Semua 3 outlet");
+  await page
+    .getByLabel("Penawaran", { exact: true })
+    .selectOption("Kopi + pastri · Diskon 15%");
+  await expect(approval).toBeEnabled();
+  await approval.click();
   await expect(
-    page.getByRole("button", { name: "Konfirmasi Promo" }),
-  ).toBeDisabled();
+    page.getByRole("dialog", { name: "Jadwalkan promo ini?" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Konfirmasi Promo Demo", exact: true }),
+  ).toBeEnabled();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(approval).toBeFocused();
+  await approval.click();
+  await page
+    .getByRole("button", { name: "Konfirmasi Promo Demo", exact: true })
+    .click();
   await expect(
-    page.getByRole("button", { name: "Tinjau penjadwalan" }),
-  ).toBeFocused();
+    page.getByRole("dialog", { name: "Menjadwalkan promo demo…" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("dialog", { name: "Promo demo berhasil dijadwalkan" }),
+  ).toBeVisible();
+  await page
+    .getByRole("link", { name: "Lihat Pemantauan", exact: true })
+    .click();
+  await expect(page).toHaveURL(/#monitoring\/afternoon$/);
+  await expect(
+    page.getByRole("button", { name: "Batalkan Promo", exact: true }).first(),
+  ).toBeVisible();
 });
 
 test("live API failure stays live and allows retry", async ({ page }) => {

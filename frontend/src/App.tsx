@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Button,
   DemoLabel,
@@ -11,7 +11,9 @@ import { pages, slugs, parseRoute, pageHref, type Page } from "./routing";
 export { pages, type Page } from "./routing";
 import Overview from "./pages/Overview";
 import Chat from "./pages/Chat";
-import Monitoring from "./pages/Monitoring";
+import ChatHistory from "./components/ChatHistory";
+import Monitoring, { resetMonitoringDemo } from "./pages/Monitoring";
+import { setDemoSchedule } from "./state/demo-session";
 import Analytics from "./pages/Analytics";
 import Memory from "./pages/Memory";
 import Settings from "./pages/Settings";
@@ -80,7 +82,7 @@ export function Workspace({
       }
     };
     const resize = () => {
-      if (window.matchMedia("(min-width: 1025px)").matches) setMenu(false);
+      if (window.matchMedia("(min-width: 1024px)").matches) setMenu(false);
     };
     window.addEventListener("keydown", keyboard);
     window.addEventListener("resize", resize);
@@ -103,9 +105,11 @@ export function Workspace({
   useEffect(() => {
     const changed = () => {
       setMenu(false);
-      requestAnimationFrame(() =>
-        document.getElementById("main-content")?.focus(),
-      );
+      if (document.activeElement?.getAttribute("role") !== "tab") {
+        requestAnimationFrame(() =>
+          document.getElementById("main-content")?.focus(),
+        );
+      }
     };
     window.addEventListener("hashchange", changed);
     return () => window.removeEventListener("hashchange", changed);
@@ -160,13 +164,7 @@ export function Workspace({
             </a>
           ))}
         </nav>
-        {page === "Chat AI" && (
-          <details className="conversation-history" open>
-            <summary>Percakapan</summary>
-            <p className="caption muted">Riwayat belum tersimpan di server.</p>
-            <a href="#chat">Tingkatkan penjualan sore</a>
-          </details>
-        )}
+        {page === "Chat AI" && <ChatHistory key={mode} mode={mode} />}
         <div className="sidebar-bottom">
           <div className="connection">
             <strong>
@@ -178,14 +176,16 @@ export function Workspace({
                 : "Data bisnis belum tersedia"}
             </span>
           </div>
-          <a
-            className="settings-link"
-            href="#settings"
-            aria-current={page === "Pengaturan" ? "page" : undefined}
-          >
-            <Icon name="IconSettings" />
-            Pengaturan
-          </a>
+          <nav aria-label="Navigasi pengaturan">
+            <a
+              className="settings-link"
+              href="#settings"
+              aria-current={page === "Pengaturan" ? "page" : undefined}
+            >
+              <Icon name="IconSettings" />
+              Pengaturan
+            </a>
+          </nav>
           <div className="account">
             <span className="avatar">{mode === "demo" ? "CR" : "—"}</span>
             <div>
@@ -311,7 +311,13 @@ export function Workspace({
 export default function App() {
   const [route, setRoute] = useState(() => parseRoute(location.hash));
   const page = route.page;
-  const [mode, setMode] = useState<Mode>("live");
+  const [mode, updateMode] = useState<Mode>("live");
+  const setMode = (next: Mode) => {
+    if (next === mode) return;
+    setDemoSchedule(null);
+    resetMonitoringDemo();
+    updateMode(next);
+  };
   useEffect(() => {
     const sync = () => setRoute(parseRoute(location.hash));
     window.addEventListener("hashchange", sync);
@@ -319,7 +325,9 @@ export default function App() {
   }, []);
   return (
     <Workspace page={page} mode={mode} setMode={setMode}>
-      <div key={`${mode}:${route.hash}`}>
+      <Fragment
+        key={`${mode}:${route.page === "Analitik" ? "analytics" : route.hash}`}
+      >
         {!route.valid ? (
           <EmptyState title="Halaman tidak ditemukan">
             Alamat atau ID tidak dikenal.{" "}
@@ -342,7 +350,7 @@ export default function App() {
             <DecisionSandbox />
           </>
         )}
-      </div>
+      </Fragment>
     </Workspace>
   );
 }

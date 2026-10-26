@@ -203,7 +203,7 @@ h3 {
   font-weight: 600;
   color: var(--muted);
 }
-.sidebar nav {
+.sidebar nav[aria-label="Navigasi utama"] {
   display: grid;
   gap: 8px;
   margin-top: 32px;
@@ -227,6 +227,16 @@ h3 {
 .settings-link:hover {
   background: var(--tint);
   text-decoration: none;
+}
+.sidebar > nav,
+.sidebar > .brand,
+.sidebar > .brand-caption,
+.sidebar-bottom {
+  flex-shrink: 0;
+}
+.sidebar > .chat-history-prototype {
+  min-height: 0;
+  overflow-y: auto;
 }
 .sidebar-bottom {
   margin-top: auto;
