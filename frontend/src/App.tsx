@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Button, DemoLabel, Icon, Modal, SelectField } from "./components/ui";
+import Overview from "./pages/Overview";
 
 export const pages = ["Ringkasan", "Chat AI", "Pemantauan", "Analitik", "Memori AI", "Pengaturan"] as const;
 export type Page = typeof pages[number];
@@ -36,5 +37,5 @@ export default function App() {
   const [page, setPage] = useState<Page>(readPage);
   const [mode, setMode] = useState<Mode>("live");
   useEffect(() => { const sync = () => setPage(readPage()); window.addEventListener("hashchange", sync); return () => window.removeEventListener("hashchange", sync); }, []);
-  return <Workspace page={page} mode={mode} setMode={setMode}><section className="card"><h1>{page}</h1><p className="muted">Fondasi tampilan Tara-Agent. Data bisnis belum tersedia.</p></section></Workspace>;
+  return <Workspace page={page} mode={mode} setMode={setMode}>{page === "Ringkasan" ? <Overview mode={mode} /> : <section className="card"><h1>{page}</h1><p className="muted">Data bisnis belum tersedia.</p></section>}</Workspace>;
 }
