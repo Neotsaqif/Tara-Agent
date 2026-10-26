@@ -26,7 +26,7 @@ npm run dev
 
 Vite starts the frontend at `http://127.0.0.1:5173`. Its development proxy forwards `/api` to `http://127.0.0.1:8000`; no backend CORS change is needed locally. Set `VITE_API_BASE_URL` in `frontend/.env` for a different API origin and configure that origin's CORS separately. This variable is public configuration and must not contain secrets. Production needs an explicitly configured API origin or a reverse proxy; Vite's development proxy is not included in the build.
 
-The initial mode is **API nyata**. Choose **Demo Figma** explicitly to see isolated illustration data. API failures never switch to demo. Chat drafts and settings previews are in-memory only; refreshing or leaving the page loses them. No business approval, campaign execution, login, invitation, or settings persistence is implemented. The decision sandbox in Settings exercises only the existing stateless foundation endpoint.
+The initial mode is **API nyata**. Choose **Demo Figma** explicitly to see isolated illustration data. API failures never switch to demo. Chat drafts and settings previews are in-memory only; refreshing or leaving the page loses them. Demo scheduling, stop/cancel, saving and connecting are cancellable local simulations. Mode changes clear their session state. No business approval, campaign execution, login, invitation, or settings persistence is implemented. Deep links include `#chat?context=products`, `#chat/simulation/A?offer=bundle10`, `#analytics/margin`, and `#monitoring/completed`. The decision sandbox in Settings exercises only the existing stateless foundation endpoint.
 
 Production build:
 
@@ -54,7 +54,7 @@ npm run test:e2e
 npm audit
 ```
 
-The end-to-end suite starts Vite on port 5192. Start the backend on port 8000 first: one test intentionally uses the real local health and decision endpoints. Other network mocks are explicit test fixtures, never runtime fallbacks. Browser tests cover 375, 768, 1024, and 1440 px, asset loading, overflow, axe accessibility, dialogs, focus, API failure/retry, and disabled scheduling. Chromium only; Firefox, Safari, and physical-device testing have not been performed.
+The end-to-end suite starts Vite on port 5192. Start the backend on port 8000 first: one test intentionally uses the real local health and decision endpoints. Other network mocks are explicit test fixtures, never runtime fallbacks. Browser tests cover 375, 768, 1024, and 1440 px, asset loading, overflow, axe accessibility, dialogs, keyboard/focus, API failure/retry, demo scheduling, timer/mode isolation, history/deep links, Analytics tabs, settings simulation, and exact CSV contents. One inspected Windows Chromium Overview screenshot is committed as a regression baseline; other platforms skip that screenshot only. Review visual differences before running `--update-snapshots`. Chromium only; Firefox, Safari, and physical-device testing have not been performed. Coverage and exceptions: `docs/figma-coverage.md` and `docs/frontend-verification.md`.
 
 ## Data and database status
 

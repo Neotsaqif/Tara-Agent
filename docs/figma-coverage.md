@@ -2,7 +2,7 @@
 
 Source: `wK37fT7GIe5zPyRgB8HjPx`, canvas `93:79`, inspected 26 October 2026. Desktop reference: 1440 × 900. Counts: 13 main frames, 28 prototype states, 69 overlays/motion frames, 130 interactive component frames. These are not 240 distinct pages.
 
-Status at the start of this iteration: main pages exist; prototype transitions and shared accessibility are partial. Final verification and exceptions are recorded in `implementation-status.md`. A mapped frame is not a claim of pixel-perfect equivalence.
+Implementation groups are complete as a frontend demo, with deliberate unavailable states and shared motion/component reuse. Final verification and explicit exceptions are recorded in `frontend-verification.md` and `implementation-status.md`. A mapped frame is not a claim of pixel-perfect equivalence or individually screenshot-certified coverage.
 
 ## Main frames
 
