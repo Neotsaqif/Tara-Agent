@@ -8,7 +8,9 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./tara.db"
     llm_provider: str = "mock"
     llm_api_key: str = ""
-    llm_model: str = "mock"
+    llm_model: str = "gemini-3.5-flash-lite"
+    llm_timeout_seconds: float = 30.0
+    llm_max_retries: int = 2
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

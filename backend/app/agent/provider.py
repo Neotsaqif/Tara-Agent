@@ -1,12 +1,21 @@
 from typing import Protocol
+from .schemas import ModelAnswer
+
+
+class ProviderError(RuntimeError):
+    """Safe, user-facing provider failure category."""
 
 
 class LLMProvider(Protocol):
-    def answer(self, prompt: str) -> str: ...
+    name: str
+    def answer(self, prompt: str) -> ModelAnswer: ...
 
 
 class MockProvider:
-    """Explicit local provider; never represents a production LLM response."""
+    name = "mock"
 
-    def answer(self, prompt: str) -> str:
-        return f"[MOCK] No external LLM configured. Prompt received: {prompt[:120]}"
+    def answer(self, prompt: str) -> ModelAnswer:
+        return ModelAnswer(
+            answer="Saya belum dapat menyimpulkan kondisi bisnis tanpa dataset yang terhubung.",
+            limitations=["Belum ada dataset penjualan yang terhubung.", "Diperlukan data periode, outlet, transaksi, harga, dan biaya."],
+        )

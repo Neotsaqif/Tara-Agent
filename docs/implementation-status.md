@@ -11,7 +11,10 @@
 | Approve/Reject/Revise transitions | Implemented foundation | Reject=`reexecuting`; Revise=`revision_requested`; persistence not implemented |
 | Explicit API errors | Implemented | Approval missing returns 403; invalid workflow transition returns 409 |
 | CSV validation/quarantine report | Implemented foundation | Required fields, numeric validation, invalid rows excluded from valid rows |
+| AI Core v1 chat + Pydantic contract | Implemented foundation | `/api/v1/agent/chat`; bounded in-memory sessions; no persistence |
 | Mock LLM provider | Implemented | No external calls or API key required |
+| Gemini provider | Implemented adapter | Official `google-genai`; requires server-side key and tested model availability |
+| Intent routing | Implemented foundation | Deterministic routing for three workflows |
 | TARA GEOAI boundary | Skeleton | Typed request/result and mock provider; no real geospatial data |
 | Context manager/router/coordinator | Skeleton | State interfaces exist; persistent event context not implemented |
 | PostgreSQL + SQLAlchemy + Alembic | Planned | Not installed; no persistence migration has been tested |

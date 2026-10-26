@@ -14,6 +14,18 @@ uvicorn app.main:app --reload --port 8000
 
 Health check: `http://localhost:8000/api/v1/health`.
 
+AI Core v1 uses `LLM_PROVIDER=mock` by default. For local Gemini:
+
+```powershell
+$env:LLM_PROVIDER="gemini"
+$env:LLM_API_KEY="<server-side-key>"
+$env:LLM_MODEL="gemini-3.5-flash-lite"
+$env:LLM_TIMEOUT_SECONDS="30"
+$env:LLM_MAX_RETRIES="2"
+```
+
+The key stays server-side and must not be committed or sent to the frontend. See [AI Core v1](ai-core-v1.md).
+
 ## Frontend
 
 Prerequisite: Node.js 20+ and npm. The test runner supports Node.js 20, 22, or 24+; validation used Node.js 24.

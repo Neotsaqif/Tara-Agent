@@ -2,7 +2,7 @@
 
 **Business Reasoning & Value Acceleration Agent** — *From Business Signals to Executable Decisions.*
 
-Fondasi MVP untuk F&B multi-outlet. Repository saat ini menyediakan React/Vite/TypeScript UI, FastAPI API, deterministic analytics, constraint gate, workflow decision state, CSV validation foundation, GeoAI interface, mock LLM provider, test unit, dan dokumentasi arsitektur.
+Fondasi MVP untuk F&B multi-outlet. Repository saat ini menyediakan React/Vite/TypeScript UI, FastAPI API, AI Core v1 dengan mock/Gemini provider, deterministic analytics, constraint gate, workflow decision state, CSV validation foundation, GeoAI interface, test unit, dan dokumentasi arsitektur.
 
 ## Quick start
 
@@ -34,6 +34,7 @@ Salin `.env.example` ke `.env` bila perlu. Default `LLM_PROVIDER=mock`; API key 
 - [Architecture](docs/architecture.md)
 - [Setup](docs/setup.md)
 - [Implementation status](docs/implementation-status.md)
+- [AI Core v1](docs/ai-core-v1.md)
 - Source project documents: `.tara-agents/`
 
 ## Status dan batasan
