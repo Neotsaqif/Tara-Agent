@@ -379,7 +379,7 @@ for (const width of widths) {
       await accessible(page);
       await closeDialog(page);
       await page
-        .getByRole("button", { name: "Setujui Promo", exact: true })
+        .getByRole("button", { name: "Simulasikan penjadwalan", exact: true })
         .click();
       await accessible(page);
       await closeDialog(page);
@@ -501,7 +501,7 @@ test("deep links, browser history and refresh keep the route but never persist d
     page.getByRole("button", { name: "API nyata", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
   await expect(
-    page.getByRole("button", { name: "Setujui Promo", exact: true }),
+    page.getByRole("button", { name: "Simulasikan penjadwalan", exact: true }),
   ).toHaveCount(0);
   await page.getByRole("button", { name: "Demo Figma", exact: true }).click();
   await expect(
@@ -642,10 +642,10 @@ test("pending demo timers are cleaned up on mode and route changes", async ({
   ).toHaveValue("Semua kategori");
   await navigate(page, "chat/simulation/A");
   await page
-    .getByRole("button", { name: "Setujui Promo", exact: true })
+    .getByRole("button", { name: "Simulasikan penjadwalan", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Konfirmasi Promo Demo", exact: true })
+    .getByRole("button", { name: "Konfirmasi simulasi", exact: true })
     .click();
   await expect(
     page.getByRole("dialog", { name: "Menjadwalkan promo demo…", exact: true }),

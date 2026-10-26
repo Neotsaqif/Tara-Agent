@@ -84,7 +84,7 @@ test("supported simulation fixture schedules a demo; changed parameters invalida
     .click();
   await expect(page.getByText("Rp 27,6 jt", { exact: true })).toBeVisible();
   const approval = page.getByRole("button", {
-    name: "Setujui Promo",
+    name: "Simulasikan penjadwalan",
     exact: true,
   });
   await page
@@ -105,23 +105,23 @@ test("supported simulation fixture schedules a demo; changed parameters invalida
   await expect(approval).toBeEnabled();
   await approval.click();
   await expect(
-    page.getByRole("dialog", { name: "Jadwalkan promo ini?" }),
+    page.getByRole("dialog", { name: "Simulasikan penjadwalan promo ini?" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Konfirmasi Promo Demo", exact: true }),
+    page.getByRole("button", { name: "Konfirmasi simulasi", exact: true }),
   ).toBeEnabled();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(approval).toBeFocused();
   await approval.click();
   await page
-    .getByRole("button", { name: "Konfirmasi Promo Demo", exact: true })
+    .getByRole("button", { name: "Konfirmasi simulasi", exact: true })
     .click();
   await expect(
     page.getByRole("dialog", { name: "Menjadwalkan promo demo…" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("dialog", { name: "Promo demo berhasil dijadwalkan" }),
+    page.getByRole("dialog", { name: "Simulasi penjadwalan selesai" }),
   ).toBeVisible();
   await page
     .getByRole("link", { name: "Lihat Pemantauan", exact: true })

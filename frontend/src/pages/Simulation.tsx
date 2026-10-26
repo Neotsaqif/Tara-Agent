@@ -258,7 +258,7 @@ export default function Simulation({
               Ubah Simulasi
             </Button>
             <Button disabled={!snapshot} onClick={() => setDialog("confirm")}>
-              Setujui Promo
+              Simulasikan penjadwalan
             </Button>
           </div>
           <p className="caption muted">
@@ -271,7 +271,10 @@ export default function Simulation({
         request jaringan atau perhitungan prediksi.
       </p>
       {dialog === "confirm" && (
-        <Modal title="Jadwalkan promo ini?" onClose={() => setDialog(null)}>
+        <Modal
+          title="Simulasikan penjadwalan promo ini?"
+          onClose={() => setDialog(null)}
+        >
           <p className="muted">
             Tinjau ketentuan sebelum menjadwalkan contoh demo.
           </p>
@@ -293,7 +296,7 @@ export default function Simulation({
           <strong>{snapshot ? "64%" : "Belum tersedia"}</strong>
           <p className="caption muted">
             Demo / simulasi · Jadwal hanya disimpan dalam memori sesi. Tidak ada
-            persetujuan atau eksekusi bisnis.
+            campaign dibuat atau dikirim, persetujuan, atau eksekusi bisnis.
           </p>
           <div className="actions">
             <Button variant="secondary" onClick={() => setDialog(null)}>
@@ -303,7 +306,7 @@ export default function Simulation({
               disabled={!snapshot}
               onClick={() => setDialog("scheduling")}
             >
-              Konfirmasi Promo Demo
+              Konfirmasi simulasi
             </Button>
           </div>
         </Modal>
@@ -324,7 +327,7 @@ export default function Simulation({
       )}
       {dialog === "scheduled" && (
         <Modal
-          title="Promo demo berhasil dijadwalkan"
+          title="Simulasi penjadwalan selesai"
           onClose={() => setDialog(null)}
         >
           <img
@@ -334,7 +337,8 @@ export default function Simulation({
           />
           <h2>{option?.title}</h2>
           <p className="muted">
-            Contoh jadwal siap selama sesi ini. Tidak ada promo aktual dibuat.
+            Simulasi selesai; tidak ada campaign dibuat atau dikirim. Contoh
+            jadwal hanya tersedia selama sesi ini.
           </p>
           <a className="button primary" href="#monitoring/afternoon">
             Lihat Pemantauan

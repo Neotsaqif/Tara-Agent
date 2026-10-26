@@ -48,7 +48,7 @@ describe("Simulation fixture boundaries", () => {
         }),
       ).not.toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "Setujui Promo" }),
+        screen.getByRole("button", { name: "Simulasikan penjadwalan" }),
       ).toBeDisabled();
       await user.selectOptions(field, original);
       expect(
@@ -67,7 +67,7 @@ describe("Simulation fixture boundaries", () => {
       ).toHaveLength(4);
       expect(screen.queryByRole("group")).not.toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "Setujui Promo" }),
+        screen.getByRole("button", { name: "Simulasikan penjadwalan" }),
       ).toBeDisabled();
     },
   );
@@ -201,14 +201,18 @@ describe("Simulation fixture boundaries", () => {
   it("confirms only an in-memory demo schedule", () => {
     vi.useFakeTimers();
     render(<Simulation optionId="A" onBack={vi.fn()} />);
-    act(() => screen.getByRole("button", { name: "Setujui Promo" }).click());
-    const dialog = screen.getByRole("dialog", { name: "Jadwalkan promo ini?" });
+    act(() =>
+      screen.getByRole("button", { name: "Simulasikan penjadwalan" }).click(),
+    );
+    const dialog = screen.getByRole("dialog", {
+      name: "Simulasikan penjadwalan promo ini?",
+    });
     expect(
-      within(dialog).getByText(/Tidak ada persetujuan atau eksekusi bisnis/),
+      within(dialog).getByText(/Tidak ada campaign dibuat atau dikirim/),
     ).toBeInTheDocument();
     act(() =>
       within(dialog)
-        .getByRole("button", { name: "Konfirmasi Promo Demo" })
+        .getByRole("button", { name: "Konfirmasi simulasi" })
         .click(),
     );
     expect(
@@ -217,7 +221,12 @@ describe("Simulation fixture boundaries", () => {
     expect(getDemoSchedule()).toBeNull();
     act(() => vi.advanceTimersByTime(1000));
     expect(
-      screen.getByRole("dialog", { name: "Promo demo berhasil dijadwalkan" }),
+      screen.getByRole("dialog", { name: "Simulasi penjadwalan selesai" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Simulasi selesai; tidak ada campaign dibuat atau dikirim/,
+      ),
     ).toBeInTheDocument();
     expect(getDemoSchedule()?.title).toBe("Paket Kopi Sore");
     expect(fetch).not.toHaveBeenCalled();
@@ -225,9 +234,11 @@ describe("Simulation fixture boundaries", () => {
   it("cancels pending scheduling on unmount", () => {
     vi.useFakeTimers();
     const { unmount } = render(<Simulation optionId="A" onBack={vi.fn()} />);
-    act(() => screen.getByRole("button", { name: "Setujui Promo" }).click());
     act(() =>
-      screen.getByRole("button", { name: "Konfirmasi Promo Demo" }).click(),
+      screen.getByRole("button", { name: "Simulasikan penjadwalan" }).click(),
+    );
+    act(() =>
+      screen.getByRole("button", { name: "Konfirmasi simulasi" }).click(),
     );
     unmount();
     act(() => vi.runAllTimers());
