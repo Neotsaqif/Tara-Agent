@@ -5,6 +5,8 @@ __pycache__/
 .env
 node_modules/
 .next/
+dist/
+*.tsbuildinfo
 coverage/
 *.db
 .DS_Store

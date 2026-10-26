@@ -1,29 +1,36 @@
 # TARA AGENT — Architecture
 
 ## Stack decision
-MVP memakai **FastAPI + Python 3.11**, frontend HTML statis yang dapat diganti Next.js, dan SQLite lokal sebagai default. FastAPI dipilih karena cocok untuk deterministic analytics, type validation, dan pengujian cepat. PostgreSQL/Supabase menjadi target saat persistence multi-user diperlukan. LLM memakai interface provider dengan `mock` sebagai default; tidak ada API key palsu.
+MVP menggunakan **React + Vite + TypeScript** untuk frontend dan **FastAPI + Python 3.11** untuk backend. Frontend dipilih untuk UI modular dan TypeScript; FastAPI mendukung validasi API serta deterministic analytics. PostgreSQL adalah target database, tetapi persistence SQLAlchemy/Alembic belum dipasang karena belum ada migration/data contract yang siap diuji. SQLite tetap menjadi konfigurasi lokal non-persisten.
 
 ```mermaid
 flowchart LR
- UI[Frontend UI] --> API[FastAPI API]
+ UI[React Vite UI] --> API[FastAPI API]
  API --> WF[Workflow Coordinator]
  WF --> CORE[Context / Router / Agent]
- WF --> TOOLS[Deterministic Analytics & Tools]
- TOOLS --> DB[(Database)]
- CORE --> LLM[Provider Interface / Mock]
- WF --> AUDIT[Audit Log]
- GEO[TARA GEOAI modular] -. optional provider .-> CORE
+ WF --> TOOLS[Deterministic Analytics / Ingestion]
+ TOOLS --> DB[(PostgreSQL target)]
+ CORE --> LLM[Provider interface / Mock]
+ WF --> AUDIT[Audit boundary]
+ GEO[TARA GEOAI provider boundary] -. optional .-> CORE
 ```
 
-## Workflow
-- Informational: Input → Context Check → Task Routing → Read Business Data → Deterministic Query/Calculation → Business Answer.
-- Diagnostic: Input → Context Check → Task Routing → Read Business Data → Diagnose → Evidence Validation → Finding & Explanation.
-- Goal-Directed: routing → readiness/diagnosis → options → simulation → predictive monitoring → constraint gate/evaluation → decision → user selection → approval → action → actual monitoring → control → feedback.
+## Core workflow
+- Informational: Input → Context Check → Intent Routing → Read Business Data → Deterministic Query/Calculation → Business Answer.
+- Diagnostic: Input → Context Check → Intent Routing → Read Business Data → Diagnose → Evidence Validation → Finding & Explanation.
+- Goal-Directed: Routing → Readiness/Data → Understand/Diagnose → Explore Options → Simulate → Predictive Monitoring → Constraint Gate/Option Evaluation → Decision/Explanation → User Decision.
 
-Approve requires an approver and transitions to executing. Reject and Revise return to diagnosing. Action must not execute without approval; external campaign publishing is not implemented. Event/case IDs and persistent audit records are planned for the database layer.
+Approve validates the current foundation approval field and transitions to execution, but is not authentication or RBAC. Reject transitions to `reexecuting` for re-diagnosis and re-simulation. Revise requires `revision_parameters` and transitions to `revision_requested`; this is distinct from Reject. Persistent event identity and action packages remain planned. No external campaign publication exists.
 
-## Modules
-`analytics` owns deterministic calculations; `constraints` owns hard gates; `workflows` owns state; `agent` owns provider abstraction. Planned boundaries include ingestion, simulation, monitoring, auth/RBAC, audit, and database repositories.
+## Module boundaries
+- `analytics`: deterministic financial calculations.
+- `constraints`: hard constraint evaluation; LLM cannot bypass it.
+- `workflows`: typed workflow state and decision transitions.
+- `data_ingestion`: controlled CSV validation and invalid-row report.
+- `agent`: provider abstraction with explicit mock mode.
+- `geoai`: typed location context interface with source, observation, coverage, limitations, and confidence.
 
-## Governance and open decisions
-Human approval remains mandatory for high-impact actions. Input validation exists at API/model and calculation boundaries. GeoAI, POS, Maps, Weather, notification, authentication, PostgreSQL, and production LLM provider remain unconfigured and must not be represented as active integrations.
+Planned boundaries include context manager, intent router, planner, tool allowlist, repositories, authentication/RBAC, audit persistence, simulation, predictive monitoring, actual monitoring, and feedback.
+
+## Security and governance
+Secrets remain server-side. `VITE_API_BASE_URL` is non-secret frontend configuration. Approval is not considered authenticated authorization. Human approval remains required for high-impact action. Input errors return explicit HTTP errors. External POS, Maps, Weather, notification, and GeoAI integrations are not active.
