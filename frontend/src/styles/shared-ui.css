@@ -1,0 +1,375 @@
+.icon {
+  width: 16px;
+  height: 16px;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-weight: 500;
+  text-decoration: none;
+  min-height: 40px;
+}
+.button:hover {
+  text-decoration: none;
+}
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.button.primary {
+  background: var(--primary);
+  color: white;
+}
+.button.primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+.button.secondary {
+  background: white;
+  border-color: var(--border);
+  color: var(--text);
+}
+.button.secondary:hover:not(:disabled) {
+  background: var(--tint);
+  border-color: #bfdbfe;
+}
+.button.danger {
+  background: #dc2626;
+  color: white;
+}
+.button.danger:hover:not(:disabled) {
+  background: #b91c1c;
+}
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: white;
+}
+.icon-button:hover {
+  background: var(--tint);
+}
+.page-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+.page-heading .muted {
+  margin-top: 4px;
+}
+.page-heading > .button {
+  min-width: 160px;
+}
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+.metric {
+  padding: 16px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.metric h2 {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+.metric-value {
+  font-size: 28px;
+  line-height: 41px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.metric-note {
+  font-size: 12px;
+  line-height: 17px;
+  font-weight: 500;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.field > span:first-child {
+  font-size: 12px;
+  font-weight: 500;
+}
+.select-wrap {
+  position: relative;
+  display: block;
+}
+.select-wrap .icon {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  pointer-events: none;
+}
+.select-wrap select {
+  appearance: none;
+  padding-right: 40px;
+  width: 100%;
+}
+.compact-field > span:first-child {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+input,
+select,
+textarea {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: white;
+  color: var(--text);
+  padding: 11px 12px;
+  min-height: 44px;
+  max-width: 100%;
+}
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+}
+.notice {
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--tint);
+  font-size: 13px;
+}
+.notice.warning {
+  background: #fffbeb;
+  color: var(--warning);
+}
+.notice.error {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.empty-state {
+  padding: 40px 24px;
+  text-align: center;
+  align-items: center;
+}
+.mode-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.mode-bar > span {
+  color: var(--navy);
+  font-weight: 600;
+}
+.segmented {
+  display: inline-flex;
+  gap: 4px;
+  background: white;
+  border-radius: 8px;
+  padding: 4px;
+}
+.segmented button {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  min-height: 36px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.segmented button[aria-pressed="true"] {
+  background: var(--tint);
+  color: var(--primary);
+}
+.demo-label {
+  font-size: 11px;
+  color: var(--muted);
+}
+.modal {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  width: min(560px, calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  box-shadow: 0 12px 40px #10182824;
+  color: var(--text);
+}
+.modal[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.modal::backdrop {
+  background: #10182866;
+}
+.modal h2 {
+  font-size: 28px;
+  line-height: 36px;
+  padding-right: 20px;
+}
+.modal-close {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+}
+.modal .button {
+  flex-shrink: 0;
+}
+.modal-close .icon {
+  width: 20px;
+  height: 20px;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+th,
+td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+thead {
+  background: var(--canvas);
+  color: var(--muted);
+}
+th {
+  font-weight: 500;
+}
+tbody th {
+  color: var(--text);
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.text-button {
+  color: var(--primary);
+  font-weight: 600;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  min-height: 24px;
+}
+.text-button:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1199px) {
+  .metrics {
+    gap: 16px;
+  }
+  .metric-value {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 599px) {
+  h1 {
+    font-size: 24px;
+    line-height: 33px;
+  }
+  .page-heading {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .page-heading > .button {
+    min-width: 0;
+  }
+  .metrics {
+    gap: 12px;
+  }
+  .metric {
+    padding: 12px;
+    gap: 8px;
+  }
+  .metric h2 {
+    font-size: 12px;
+  }
+  .metric-value {
+    font-size: 22px;
+    line-height: 32px;
+  }
+  .metric-note {
+    font-size: 11px;
+  }
+  .card {
+    padding: 20px;
+  }
+  .mode-bar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .modal {
+    padding: 24px;
+  }
+  .modal h2 {
+    font-size: 24px;
+    line-height: 32px;
+  }
+  .actions > .button {
+    flex: 1;
+  }
+  .segmented button {
+    min-height: 40px;
+  }
+}

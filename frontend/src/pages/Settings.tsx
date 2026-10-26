@@ -8,7 +8,7 @@ import {
   Notice,
   PageHeading,
 } from "../components/ui";
-import "./secondary.css";
+import "../styles/pages/secondary.css";
 
 type Draft = {
   business: string;

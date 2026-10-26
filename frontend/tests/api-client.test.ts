@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { API_BASE_URL, ApiError, api, type DecisionRequest } from "./client";
+import {
+  API_BASE_URL,
+  ApiError,
+  api,
+  type DecisionRequest,
+} from "../src/api/client";
 
 const fetchMock = vi.fn<typeof fetch>();
 const decision: DecisionRequest = {

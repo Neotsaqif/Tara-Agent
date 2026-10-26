@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import Overview from "./Overview";
+import Overview from "../../src/pages/Overview";
 
 describe("Overview demo interactions", () => {
   it("shows the exact Saturday heatmap snapshot and closes it", async () => {

@@ -1,8 +1,8 @@
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import Simulation from "./Simulation";
-import { getDemoSchedule, setDemoSchedule } from "../state/demo-session";
+import Simulation from "../../src/pages/Simulation";
+import { getDemoSchedule, setDemoSchedule } from "../../src/state/demo-session";
 
 beforeEach(() => {
   history.replaceState(null, "", "#chat");

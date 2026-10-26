@@ -24,8 +24,8 @@ import {
   type MonitoringCampaign,
   type OutletId,
 } from "../data/monitoring-demo";
-import "./flows.css";
-import "./monitoring-prototype.css";
+import "../styles/pages/flows.css";
+import "../styles/pages/monitoring-prototype.css";
 
 // Survives the application's full-hash remount, but never survives a page reload.
 const demoStates = new Map<CampaignId, DemoCampaignState>();

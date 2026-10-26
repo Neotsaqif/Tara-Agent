@@ -18,8 +18,8 @@ import {
   type ChatContext,
 } from "../data/chat-demo";
 import Simulation from "./Simulation";
-import "./flows.css";
-import "./chat-prototype.css";
+import "../styles/pages/flows.css";
+import "../styles/pages/chat-prototype.css";
 
 export default function Chat({ mode }: { mode: Mode }) {
   const [hash, setHash] = useState(location.hash);

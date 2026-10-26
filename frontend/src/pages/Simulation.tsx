@@ -19,8 +19,8 @@ import {
   simulationOfferId,
 } from "../data/simulation-demo";
 import { setDemoSchedule } from "../state/demo-session";
-import "./flows.css";
-import "./chat-prototype.css";
+import "../styles/pages/flows.css";
+import "../styles/pages/chat-prototype.css";
 
 export default function Simulation({
   optionId,

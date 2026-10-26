@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Mode } from "../App";
 import { chatFixtures, chatHref, type ChatContext } from "../data/chat-demo";
-import "../pages/chat-prototype.css";
+import "../styles/pages/chat-prototype.css";
 
 const history: { context: ChatContext; title: string; group: string }[] = [
   {
