@@ -28,6 +28,14 @@ export function LineChart({
   max?: number;
 }) {
   const [point, setPoint] = useState<number | null>(null);
+  const points =
+    series === "PrimarySeries"
+      ? [
+          { date: "01 Sep", value: "Rp 13,2 jt", note: "+4,2%" },
+          { date: "07 Sep", value: "Rp 21,4 jt", note: "+8,1%" },
+          { date: "13 Sep", value: "Rp 28,4 jt", note: "+12,4%" },
+        ]
+      : null;
   return (
     <Card title={title} subtitle={subtitle} className="chart-card">
       <div
@@ -81,13 +89,30 @@ export function LineChart({
               onMouseEnter={() => setPoint(position)}
               onMouseLeave={() => setPoint(null)}
               onBlur={() => setPoint(null)}
-              onClick={() => setPoint(point === position ? null : position)}
+              onClick={() => setPoint(position)}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") setPoint(null);
+              }}
             />
           ))}
         </div>
         {point !== null && (
           <output className="chart-tooltip">
-            {labels[[0, 3, 6][point]]} · Data ilustrasi, bukan pengukuran aktual
+            {points ? (
+              <>
+                <strong>{points[point].date}</strong>
+                <span>{points[point].value}</span>
+                <span className="success">
+                  {points[point].note} dari periode sebelumnya
+                </span>
+                <small>Data ilustrasi Figma</small>
+              </>
+            ) : (
+              <>
+                {labels[[0, 3, 6][point]]} · Nilai titik belum tersedia; grafik
+                ilustrasi
+              </>
+            )}
           </output>
         )}
       </div>
@@ -105,6 +130,12 @@ export function BarChart({
   title?: string;
   subtitle?: string;
 }) {
+  const [point, setPoint] = useState<number | null>(null);
+  const points = [
+    { date: "07 Sep", value: "Rp 18,8 jt", note: "+4,2%" },
+    { date: "10 Sep", value: "Rp 22,5 jt", note: "+8,1%" },
+    { date: "13 Sep", value: "Rp 24,8 jt", note: "+12,4%" },
+  ];
   return (
     <Card title={title} subtitle={subtitle} className="chart-card">
       <div className="bar-chart">
@@ -121,7 +152,15 @@ export function BarChart({
             <div key={days[index]}>
               <button
                 title={`${days[index]} · Kinerja ilustrasi`}
-                aria-label={`${days[index]}, ${[13, 16, 14, 20, 22, 28, 25][index]} juta rupiah ilustrasi`}
+                aria-label={`${days[index]}, lihat rincian ilustrasi`}
+                onFocus={() => setPoint([0, 3, 6].indexOf(index))}
+                onMouseEnter={() => setPoint([0, 3, 6].indexOf(index))}
+                onBlur={() => setPoint(null)}
+                onMouseLeave={() => setPoint(null)}
+                onClick={() => setPoint([0, 3, 6].indexOf(index))}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") setPoint(null);
+                }}
                 style={{
                   height,
                   background:
@@ -132,6 +171,22 @@ export function BarChart({
             </div>
           ))}
         </div>
+        {point !== null && (
+          <output className="chart-tooltip">
+            {point >= 0 ? (
+              <>
+                <strong>{points[point].date}</strong>
+                <span>{points[point].value}</span>
+                <span className="success">
+                  {points[point].note} dari periode sebelumnya
+                </span>
+                <small>Data ilustrasi Figma</small>
+              </>
+            ) : (
+              <>Nilai titik belum tersedia; grafik ilustrasi</>
+            )}
+          </output>
+        )}
       </div>
       <p className="chart-legend">● Pendapatan</p>
     </Card>

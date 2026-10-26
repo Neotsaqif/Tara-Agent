@@ -1,9 +1,10 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Analytics from "./Analytics";
 
 beforeEach(() => {
+  window.history.replaceState(null, "", "#analytics");
   vi.stubGlobal(
     "ResizeObserver",
     class {
@@ -14,9 +15,90 @@ beforeEach(() => {
   );
   vi.stubGlobal("fetch", vi.fn());
 });
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.restoreAllMocks();
+  vi.useRealTimers();
+});
 
 describe("Analytics navigation and demo boundaries", () => {
+  it("loads tab deep links and passes the corresponding AI context", () => {
+    window.history.replaceState(null, "", "#analytics/customers");
+    render(<Analytics mode="demo" />);
+    expect(screen.getByRole("tab", { name: "Pelanggan" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(
+      screen.getByRole("link", { name: "Analisis dengan AI" }),
+    ).toHaveAttribute("href", "#chat?context=customers");
+    fireEvent.click(screen.getByRole("tab", { name: "Margin" }));
+    expect(window.location.hash).toBe("#analytics/margin");
+  });
+
+  it("requires export confirmation, supports cancellation and downloads only a labeled demo CSV", async () => {
+    const user = userEvent.setup();
+    const create = vi.fn((blob: Blob) => {
+      expect(blob.size).toBeGreaterThan(0);
+      return "blob:demo";
+    });
+    const revoke = vi.fn();
+    vi.stubGlobal(
+      "URL",
+      class extends URL {
+        static createObjectURL = create;
+        static revokeObjectURL = revoke;
+      },
+    );
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    const { unmount } = render(<Analytics mode="demo" />);
+    await user.click(screen.getByRole("button", { name: "Ekspor laporan" }));
+    expect(create).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "Batal" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Ekspor laporan" }));
+    await user.click(screen.getByRole("button", { name: "Unduh CSV demo" }));
+    expect(create).toHaveBeenCalledOnce();
+    expect(create.mock.calls[0][0]).toBeInstanceOf(Blob);
+    expect(screen.getByText(/CSV demo diunduh/)).toBeInTheDocument();
+    unmount();
+    expect(revoke).toHaveBeenCalledWith("blob:demo");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("clears comparison, export dialog and update timer on switching to live", () => {
+    vi.useFakeTimers();
+    const { rerender, unmount } = render(<Analytics mode="demo" />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Bandingkan periode sebelumnya" }),
+    );
+    fireEvent.change(
+      screen.getByRole("combobox", { name: "Outlet analitik" }),
+      { target: { value: "Kampus" } },
+    );
+    expect(screen.queryByText(/Perbandingan demo/)).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Bandingkan periode sebelumnya" }),
+    ).toBeDisabled();
+    fireEvent.change(
+      screen.getByRole("combobox", { name: "Outlet analitik" }),
+      { target: { value: "Semua Outlet" } },
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Ekspor laporan" }));
+    rerender(<Analytics mode="live" />);
+    act(() => vi.runAllTimers());
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Memperbarui analitik/)).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Bandingkan periode sebelumnya" }),
+    ).toBeDisabled();
+    rerender(<Analytics mode="demo" />);
+    fireEvent.click(screen.getByRole("tab", { name: "Margin" }));
+    // Flush jsdom's own asynchronous hashchange task before checking app cleanup.
+    act(() => vi.advanceTimersByTime(0));
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
+  });
   it("supports wrapping arrow keys, Home, and End with selected tab and focus kept together", async () => {
     const user = userEvent.setup();
     render(<Analytics mode="demo" />);

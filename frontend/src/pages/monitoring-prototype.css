@@ -1,0 +1,214 @@
+.monitoring-prototype {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.monitoring-prototype .page-heading,
+.monitoring-prototype .flow-toolbar,
+.monitoring-prototype .flow-tabs {
+  margin-bottom: 0;
+}
+.monitoring-status p {
+  flex: 1;
+}
+.monitoring-status .badge {
+  min-width: 130px;
+}
+.monitoring-prototype .campaign-card h2 {
+  margin-top: 16px;
+}
+.monitoring-prototype .campaign-link {
+  display: block;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.monitoring-prototype .flow-tabs a {
+  padding: 12px 24px;
+  color: var(--muted);
+  border-radius: 8px;
+  text-decoration: none;
+}
+.monitoring-prototype .flow-tabs a[aria-current="page"] {
+  background: var(--tint, #eff6ff);
+  color: var(--primary);
+}
+.monitoring-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+.monitoring-actions > * {
+  flex: 1;
+  text-align: center;
+}
+.monitoring-diagnosis h2 {
+  color: var(--navy);
+}
+.monitoring-timeline,
+.monitoring-activity {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.monitoring-timeline li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 16px 0;
+}
+.monitoring-timeline time {
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 500;
+}
+.monitoring-timeline strong {
+  font-size: 14px;
+}
+.monitoring-activity li {
+  display: flex;
+  gap: 24px;
+  padding: 12px 0;
+  font-size: 14px;
+}
+.monitoring-activity time {
+  color: var(--muted);
+}
+.monitoring-activity a {
+  color: var(--text);
+}
+.monitoring-rules {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin: 0;
+}
+.monitoring-rules dt {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.monitoring-rules dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.monitoring-chart h2 {
+  margin-bottom: 0;
+}
+.monitoring-plot-scroll {
+  overflow-x: auto;
+  margin-top: 0;
+}
+/* Exact original SVGs retain their root geometry. Scroll instead of stretching. */
+.monitoring-plot {
+  position: relative;
+  width: 1096px;
+  height: 200px;
+}
+.monitoring-grid {
+  position: absolute;
+  inset: 8px 18px 38px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.monitoring-grid > div {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.monitoring-grid span {
+  width: 40px;
+  position: absolute;
+  left: 0;
+  top: -7px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.monitoring-grid i {
+  height: 1px;
+  width: 1038px;
+  margin-left: 40px;
+  background: var(--border);
+}
+.monitoring-plot > img {
+  position: absolute;
+  left: 40px;
+  max-width: none;
+}
+.monitoring-original,
+.monitoring-plot.original .monitoring-primary {
+  top: 61.995px;
+}
+.monitoring-plot.original .monitoring-muted {
+  top: 52.96px;
+}
+.monitoring-plot.adjusted .monitoring-primary {
+  top: 62.015px;
+}
+.monitoring-plot.adjusted .monitoring-muted {
+  top: 59.955px;
+}
+.monitoring-plot.scheduled .monitoring-primary {
+  top: 37.549px;
+}
+.monitoring-plot.scheduled .monitoring-muted {
+  top: 52.949px;
+}
+.monitoring-ticks {
+  position: absolute;
+  top: 178px;
+  left: 40px;
+  width: 1038px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+}
+.monitoring-hitpoints {
+  position: absolute;
+  inset: 0 12px 20px 30px;
+  display: flex;
+  justify-content: space-between;
+}
+.monitoring-hitpoints button {
+  width: 48px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.monitoring-prototype .modal {
+  width: min(520px, calc(100vw - 32px));
+}
+.monitoring-prototype .modal:has(.monitoring-suggestion),
+.monitoring-prototype .modal:has(> p[role="status"]) {
+  margin-right: 40px;
+  width: min(480px, calc(100vw - 32px));
+  min-height: min(780px, calc(100vh - 40px));
+}
+.monitoring-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.monitoring-suggestion {
+  background: var(--tint, #eff6ff);
+}
+.monitoring-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+@media (max-width: 800px) {
+  .monitoring-rules {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .monitoring-status {
+    flex-wrap: wrap;
+  }
+}

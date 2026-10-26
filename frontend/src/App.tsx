@@ -1,30 +1,24 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Button, DemoLabel, Icon, Modal, SelectField } from "./components/ui";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  Button,
+  DemoLabel,
+  EmptyState,
+  Icon,
+  Modal,
+  SelectField,
+} from "./components/ui";
+import { pages, slugs, parseRoute, pageHref, type Page } from "./routing";
+export { pages, type Page } from "./routing";
 import Overview from "./pages/Overview";
 import Chat from "./pages/Chat";
-import Monitoring from "./pages/Monitoring";
+import ChatHistory from "./components/ChatHistory";
+import Monitoring, { resetMonitoringDemo } from "./pages/Monitoring";
+import { setDemoSchedule } from "./state/demo-session";
 import Analytics from "./pages/Analytics";
 import Memory from "./pages/Memory";
 import Settings from "./pages/Settings";
 import DecisionSandbox, { HealthStatus } from "./components/ApiFoundation";
 
-export const pages = [
-  "Ringkasan",
-  "Chat AI",
-  "Pemantauan",
-  "Analitik",
-  "Memori AI",
-  "Pengaturan",
-] as const;
-export type Page = (typeof pages)[number];
-const slugs = [
-  "overview",
-  "chat",
-  "monitoring",
-  "analytics",
-  "memory",
-  "settings",
-];
 const icons = [
   "IconOverview",
   "IconChat",
@@ -35,12 +29,10 @@ const icons = [
 ];
 export type Mode = "live" | "demo";
 export function readPage(): Page {
-  return (
-    pages[slugs.indexOf(location.hash.slice(1).split("/")[0])] ?? "Ringkasan"
-  );
+  return parseRoute(location.hash).page;
 }
 export function navigate(page: Page) {
-  location.hash = slugs[pages.indexOf(page)];
+  location.hash = pageHref(page);
 }
 
 export function Workspace({
@@ -57,24 +49,71 @@ export function Workspace({
   const [menu, setMenu] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const sidebar = useRef<HTMLElement>(null);
+  const shell = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!menu) return;
+    const previousOverflow = document.body.style.overflow;
+    const background = shell.current;
+    const trigger = menuButton.current;
+    document.body.style.overflow = "hidden";
+    if (background) background.inert = true;
     sidebar.current?.querySelector<HTMLAnchorElement>("a")?.focus();
-    const escape = (event: KeyboardEvent) => {
+    const keyboard = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        event.preventDefault();
         setMenu(false);
-        menuButton.current?.focus();
+      }
+      if (event.key === "Tab") {
+        const controls = Array.from(
+          sidebar.current?.querySelectorAll<HTMLElement>(
+            'a[href], button, input, summary, select, [tabindex="0"]',
+          ) ?? [],
+        ).filter((element) => element.getClientRects().length > 0);
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last?.focus();
+        }
+        if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first?.focus();
+        }
       }
     };
-    window.addEventListener("keydown", escape);
-    return () => window.removeEventListener("keydown", escape);
+    const resize = () => {
+      if (window.matchMedia("(min-width: 1024px)").matches) setMenu(false);
+    };
+    window.addEventListener("keydown", keyboard);
+    window.addEventListener("resize", resize);
+    return () => {
+      window.removeEventListener("keydown", keyboard);
+      window.removeEventListener("resize", resize);
+      document.body.style.overflow = previousOverflow;
+      if (background) background.inert = false;
+      trigger?.focus();
+    };
   }, [menu]);
   const [outlet, setOutlet] = useState("Semua Outlet");
   const [date, setDate] = useState("13 Sep 2026");
   const [notifications, setNotifications] = useState(false);
   useEffect(() => {
-    setMenu(false);
-  }, [page]);
+    setNotifications(false);
+    setOutlet("Semua Outlet");
+    setDate("13 Sep 2026");
+  }, [mode]);
+  useEffect(() => {
+    const changed = () => {
+      setMenu(false);
+      if (document.activeElement?.getAttribute("role") !== "tab") {
+        requestAnimationFrame(() =>
+          document.getElementById("main-content")?.focus(),
+        );
+      }
+    };
+    window.addEventListener("hashchange", changed);
+    return () => window.removeEventListener("hashchange", changed);
+  }, []);
   return (
     <div className="workspace">
       <a
@@ -99,6 +138,14 @@ export function Workspace({
         className={`sidebar ${menu ? "open" : ""}`}
         id="workspace-navigation"
         aria-label="Navigasi ruang kerja"
+        onClick={(event) => {
+          if ((event.target as HTMLElement).closest("a")) {
+            setMenu(false);
+            requestAnimationFrame(() =>
+              document.getElementById("main-content")?.focus(),
+            );
+          }
+        }}
       >
         <a className="brand" href="#overview">
           <Icon name="IconSpark1" brand />
@@ -117,13 +164,7 @@ export function Workspace({
             </a>
           ))}
         </nav>
-        {page === "Chat AI" && (
-          <details className="conversation-history" open>
-            <summary>Percakapan</summary>
-            <p className="caption muted">Riwayat belum tersimpan di server.</p>
-            <a href="#chat">Tingkatkan penjualan sore</a>
-          </details>
-        )}
+        {page === "Chat AI" && <ChatHistory key={mode} mode={mode} />}
         <div className="sidebar-bottom">
           <div className="connection">
             <strong>
@@ -135,14 +176,16 @@ export function Workspace({
                 : "Data bisnis belum tersedia"}
             </span>
           </div>
-          <a
-            className="settings-link"
-            href="#settings"
-            aria-current={page === "Pengaturan" ? "page" : undefined}
-          >
-            <Icon name="IconSettings" />
-            Pengaturan
-          </a>
+          <nav aria-label="Navigasi pengaturan">
+            <a
+              className="settings-link"
+              href="#settings"
+              aria-current={page === "Pengaturan" ? "page" : undefined}
+            >
+              <Icon name="IconSettings" />
+              Pengaturan
+            </a>
+          </nav>
           <div className="account">
             <span className="avatar">{mode === "demo" ? "CR" : "—"}</span>
             <div>
@@ -156,7 +199,7 @@ export function Workspace({
           </div>
         </div>
       </aside>
-      <div className="main-shell">
+      <div className="main-shell" ref={shell}>
         <header className="topbar">
           <button
             ref={menuButton}
@@ -213,13 +256,22 @@ export function Workspace({
               </button>
             </div>
           </div>
-          {(outlet !== "Semua Outlet" || date !== "13 Sep 2026") && (
-            <div className="notice info" role="status">
-              Data untuk {outlet} · {date} belum tersedia. Angka demo di bawah
-              tetap menggambarkan semua outlet pada 13 Sep 2026.
-            </div>
+          {outlet !== "Semua Outlet" || date !== "13 Sep 2026" ? (
+            <EmptyState
+              title={
+                mode === "demo"
+                  ? "Fixture scope belum tersedia"
+                  : "Data scope belum tersedia"
+              }
+            >
+              {outlet} · {date}.{" "}
+              {mode === "demo"
+                ? "Demo hanya menyediakan semua outlet pada 13 Sep 2026. Kembalikan filter header untuk membuka skenario."
+                : "API data bisnis belum tersedia. Tidak ada data demo yang digunakan sebagai pengganti."}
+            </EmptyState>
+          ) : (
+            children
           )}
-          {children}
           {mode === "demo" && <DemoLabel />}
         </main>
       </div>
@@ -243,7 +295,7 @@ export function Workspace({
           {mode === "demo" && (
             <Button
               onClick={() => {
-                navigate("Pemantauan");
+                location.hash = "#monitoring/weekend";
                 setNotifications(false);
               }}
             >
@@ -257,32 +309,48 @@ export function Workspace({
 }
 
 export default function App() {
-  const [page, setPage] = useState<Page>(readPage);
-  const [mode, setMode] = useState<Mode>("live");
+  const [route, setRoute] = useState(() => parseRoute(location.hash));
+  const page = route.page;
+  const [mode, updateMode] = useState<Mode>("live");
+  const setMode = (next: Mode) => {
+    if (next === mode) return;
+    setDemoSchedule(null);
+    resetMonitoringDemo();
+    updateMode(next);
+  };
   useEffect(() => {
-    const sync = () => setPage(readPage());
+    const sync = () => setRoute(parseRoute(location.hash));
     window.addEventListener("hashchange", sync);
     return () => window.removeEventListener("hashchange", sync);
   }, []);
   return (
     <Workspace page={page} mode={mode} setMode={setMode}>
-      {page === "Ringkasan" ? (
-        <Overview mode={mode} />
-      ) : page === "Chat AI" ? (
-        <Chat mode={mode} />
-      ) : page === "Pemantauan" ? (
-        <Monitoring mode={mode} />
-      ) : page === "Analitik" ? (
-        <Analytics mode={mode} />
-      ) : page === "Memori AI" ? (
-        <Memory mode={mode} />
-      ) : (
-        <>
-          <Settings mode={mode} />
-          <HealthStatus />
-          <DecisionSandbox />
-        </>
-      )}
+      <Fragment
+        key={`${mode}:${route.page === "Analitik" ? "analytics" : route.hash}`}
+      >
+        {!route.valid ? (
+          <EmptyState title="Halaman tidak ditemukan">
+            Alamat atau ID tidak dikenal.{" "}
+            <a href="#overview">Kembali ke Ringkasan</a>.
+          </EmptyState>
+        ) : page === "Ringkasan" ? (
+          <Overview mode={mode} />
+        ) : page === "Chat AI" ? (
+          <Chat mode={mode} />
+        ) : page === "Pemantauan" ? (
+          <Monitoring mode={mode} />
+        ) : page === "Analitik" ? (
+          <Analytics mode={mode} />
+        ) : page === "Memori AI" ? (
+          <Memory mode={mode} />
+        ) : (
+          <>
+            <Settings mode={mode} />
+            <HealthStatus />
+            <DecisionSandbox />
+          </>
+        )}
+      </Fragment>
     </Workspace>
   );
 }

@@ -1,12 +1,63 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Settings from "./Settings";
 
 beforeEach(() => vi.stubGlobal("fetch", vi.fn()));
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  vi.useRealTimers();
+});
 
 describe("Settings local preview", () => {
+  it("simulates saving and accounting without a server and cancels timers on mode change", () => {
+    vi.useFakeTimers();
+    const { rerender } = render(<Settings mode="demo" />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Pratinjau Perubahan" }),
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Simulasikan penyimpanan" }),
+    );
+    expect(screen.getByText(/Menyimpan perubahan…/)).toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(900));
+    expect(
+      screen.getByText(
+        /Perubahan berhasil disimpan · Simulasi lokal, tidak disimpan ke server/,
+      ),
+    ).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("button", { name: "Simulasikan koneksi" }),
+    );
+    expect(screen.getByText(/Menghubungkan akuntansi…/)).toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(1100));
+    expect(
+      screen.getByText(
+        /Akuntansi terhubung · Simulasi lokal, tanpa koneksi server/,
+      ),
+    ).toBeInTheDocument();
+    rerender(<Settings mode="live" />);
+    expect(screen.queryByText(/Akuntansi terhubung/)).not.toBeInTheDocument();
+    rerender(<Settings mode="demo" />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Simulasikan koneksi" }),
+    );
+    rerender(<Settings mode="live" />);
+    act(() => vi.runAllTimers());
+    expect(screen.queryByText(/Akuntansi terhubung/)).not.toBeInTheDocument();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("cancels pending simulation timers on unmount", () => {
+    vi.useFakeTimers();
+    const { unmount } = render(<Settings mode="demo" />);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Simulasikan koneksi" }),
+    );
+    expect(vi.getTimerCount()).toBeGreaterThan(0);
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
+  });
   it("previews changed local fields and risk without saving to the server", async () => {
     const user = userEvent.setup();
     render(<Settings mode="demo" />);
@@ -85,7 +136,7 @@ describe("Settings local preview", () => {
     ).toBeInTheDocument();
     await user.click(within(dialog).getByRole("button", { name: "Mengerti" }));
     await user.click(screen.getByRole("button", { name: "Tentang undangan" }));
-    dialog = screen.getByRole("dialog", { name: "Fitur belum terhubung" });
+    dialog = screen.getByRole("dialog", { name: "Undang anggota tim" });
     expect(
       within(dialog).getByText(
         /Tidak ada undangan yang dikirim atau izin yang diubah/,

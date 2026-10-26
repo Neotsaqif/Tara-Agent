@@ -203,7 +203,7 @@ h3 {
   font-weight: 600;
   color: var(--muted);
 }
-.sidebar nav {
+.sidebar nav[aria-label="Navigasi utama"] {
   display: grid;
   gap: 8px;
   margin-top: 32px;
@@ -227,6 +227,16 @@ h3 {
 .settings-link:hover {
   background: var(--tint);
   text-decoration: none;
+}
+.sidebar > nav,
+.sidebar > .brand,
+.sidebar > .brand-caption,
+.sidebar-bottom {
+  flex-shrink: 0;
+}
+.sidebar > .chat-history-prototype {
+  min-height: 0;
+  overflow-y: auto;
 }
 .sidebar-bottom {
   margin-top: auto;
@@ -843,6 +853,20 @@ tbody th {
   font-size: 11px;
   box-shadow: 0 4px 12px #10182816;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 2;
+}
+.heatmap-tooltip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px #1018281a;
 }
 .chart-legend {
   font-size: 12px;

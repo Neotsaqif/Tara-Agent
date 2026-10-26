@@ -1,4 +1,4 @@
-import { useId, useState, type FormEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import type { Mode } from "../App";
 import {
   Button,
@@ -46,12 +46,40 @@ function SettingsForm({ mode }: { mode: Mode }) {
   const [active, setActive] = useState(0);
   const [preview, setPreview] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
+  const [invite, setInvite] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [connectionNotice, setConnectionNotice] = useState(false);
+  const [connection, setConnection] = useState<
+    "idle" | "connecting" | "connected"
+  >("idle");
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  const simulateSave = () => {
+    if (mode !== "demo" || saving) return;
+    setPreview(false);
+    setSaved(false);
+    setSaving(true);
+    timers.current.push(
+      setTimeout(() => {
+        setSaving(false);
+        setSaved(true);
+      }, 900),
+    );
+  };
+  const simulateConnection = () => {
+    if (mode !== "demo" || connection !== "idle") return;
+    setConnection("connecting");
+    setConnectionNotice(true);
+    timers.current.push(setTimeout(() => setConnection("connected"), 1100));
+  };
   const formId = useId();
   const update = (field: keyof Draft, value: string) =>
     setDraft((current) => ({ ...current, [field]: value }));
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setPreview(true);
+    setSaved(false);
   };
   const field = (
     key: keyof Draft,
@@ -156,17 +184,40 @@ function SettingsForm({ mode }: { mode: Mode }) {
                 <div className="secondary-integration-row" key={item.title}>
                   <div>
                     <h3>{item.title}</h3>
-                    <p>{item.description} · Belum terhubung</p>
+                    <p>
+                      {item.description} ·{" "}
+                      {item.title === "Akuntansi" &&
+                      mode === "demo" &&
+                      connection !== "idle"
+                        ? connection === "connecting"
+                          ? "Menghubungkan… (simulasi)"
+                          : "Terhubung (simulasi lokal, tanpa server)"
+                        : "Belum terhubung"}
+                    </p>
                   </div>
                   <Button
                     variant="secondary"
-                    onClick={() =>
-                      setExplanation(
-                        `${item.title} belum terhubung. Koneksi memerlukan API integrasi dan autentikasi yang belum tersedia. Tidak ada koneksi atau sinkronisasi yang dijalankan.`,
-                      )
+                    disabled={
+                      item.title === "Akuntansi" &&
+                      mode === "demo" &&
+                      connection !== "idle"
                     }
+                    onClick={() => {
+                      if (item.title === "Akuntansi" && mode === "demo")
+                        simulateConnection();
+                      else
+                        setExplanation(
+                          `${item.title} belum terhubung. Koneksi memerlukan API integrasi dan autentikasi yang belum tersedia. Tidak ada koneksi atau sinkronisasi yang dijalankan.`,
+                        );
+                    }}
                   >
-                    Detail koneksi
+                    {item.title === "Akuntansi" && mode === "demo"
+                      ? connection === "idle"
+                        ? "Simulasikan koneksi"
+                        : connection === "connecting"
+                          ? "Menghubungkan…"
+                          : "Terhubung · simulasi"
+                      : "Detail koneksi"}
                   </Button>
                 </div>
               ))}
@@ -204,11 +255,13 @@ function SettingsForm({ mode }: { mode: Mode }) {
                 <h2>Pengguna &amp; akses</h2>
                 <Button
                   variant="secondary"
-                  onClick={() =>
-                    setExplanation(
-                      "Undangan pengguna memerlukan autentikasi dan API pengelolaan akses yang belum tersedia. Tidak ada undangan yang dikirim atau izin yang diubah.",
-                    )
-                  }
+                  onClick={() => {
+                    if (mode === "demo") setInvite(true);
+                    else
+                      setExplanation(
+                        "Undangan pengguna memerlukan autentikasi dan API pengelolaan akses yang belum tersedia. Tidak ada undangan yang dikirim atau izin yang diubah.",
+                      );
+                  }}
                 >
                   Tentang undangan
                 </Button>
@@ -324,10 +377,67 @@ function SettingsForm({ mode }: { mode: Mode }) {
               </div>
             ))}
           </dl>
+          {mode === "demo" && (
+            <Button disabled={saving} onClick={simulateSave}>
+              Simulasikan penyimpanan
+            </Button>
+          )}
           <Button variant="secondary" onClick={() => setPreview(false)}>
             Kembali mengedit
           </Button>
         </Modal>
+      )}
+      {invite && mode === "demo" && (
+        <Modal title="Undang anggota tim" onClose={() => setInvite(false)}>
+          <p className="muted">
+            Dalam demo ini, Rainer berperan sebagai pemilik. Manajer hanya
+            mengakses outletnya, sedangkan analis dapat membaca laporan.
+          </p>
+          <p className="caption muted">
+            Simulasi lokal. Tidak ada undangan yang dikirim atau izin yang
+            diubah.
+          </p>
+          <Button variant="secondary" onClick={() => setInvite(false)}>
+            Selesai
+          </Button>
+        </Modal>
+      )}
+      {saving && (
+        <div className="secondary-toast bottom" role="status">
+          Menyimpan perubahan… · Simulasi lokal
+        </div>
+      )}
+      {saved && !connectionNotice && (
+        <div className="secondary-toast success" role="status">
+          ✓ Perubahan berhasil disimpan · Simulasi lokal, tidak disimpan ke
+          server.
+          <button
+            className="secondary-toast-dismiss"
+            aria-label="Tutup pemberitahuan"
+            onClick={() => setSaved(false)}
+          >
+            Tutup
+          </button>
+        </div>
+      )}
+      {connectionNotice && connection !== "idle" && (
+        <div
+          className={`secondary-toast ${connection === "connected" ? "success" : "connecting"}`}
+          role="status"
+        >
+          {connection === "connecting"
+            ? "Menghubungkan akuntansi… · Simulasi lokal"
+            : "✓ Akuntansi terhubung · Simulasi lokal, tanpa koneksi server."}
+          {connection === "connected" && (
+            <button
+              className="secondary-toast-dismiss"
+              aria-label="Tutup pemberitahuan koneksi"
+              onClick={() => setConnectionNotice(false)}
+            >
+              Tutup
+            </button>
+          )}
+        </div>
       )}
       {explanation && (
         <Modal

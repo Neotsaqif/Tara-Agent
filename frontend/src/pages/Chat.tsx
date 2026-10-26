@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Mode } from "../App";
 import {
   Button,
@@ -9,29 +9,79 @@ import {
   PageHeading,
 } from "../components/ui";
 import { recommendations } from "../data/campaigns-demo";
+import {
+  chatContexts,
+  chatFixtures,
+  chatHref,
+  readChatRoute,
+  simulationHref,
+  type ChatContext,
+} from "../data/chat-demo";
 import Simulation from "./Simulation";
 import "./flows.css";
+import "./chat-prototype.css";
 
 export default function Chat({ mode }: { mode: Mode }) {
+  const [hash, setHash] = useState(location.hash);
+  useEffect(() => {
+    const changed = () => setHash(location.hash);
+    window.addEventListener("hashchange", changed);
+    return () => window.removeEventListener("hashchange", changed);
+  }, []);
+  return (
+    <ChatView
+      key={`${mode}:${hash}`}
+      mode={mode}
+      hash={hash}
+      navigate={(next) => {
+        location.hash = next;
+        setHash(next);
+      }}
+    />
+  );
+}
+function ChatView({
+  mode,
+  hash,
+  navigate,
+}: {
+  mode: Mode;
+  hash: string;
+  navigate: (hash: string) => void;
+}) {
+  const route = readChatRoute(hash);
+  const fixture = chatFixtures[route.context];
   const [draft, setDraft] = useState("");
   const [objective, setObjective] = useState("");
   const [message, setMessage] = useState("");
-  const [selected, setSelected] = useState<string | null>(null);
+  const [thinking, setThinking] = useState(false);
   const [rationale, setRationale] = useState<string | null>(null);
-  const [approval, setApproval] = useState<string | null>(null);
+  const [contextOpen, setContextOpen] = useState(false);
+  const [nextContext, setNextContext] = useState<ChatContext>(route.context);
   const option = recommendations.find((item) => item.id === rationale);
-  if (selected && mode === "demo")
-    return <Simulation optionId={selected} onBack={() => setSelected(null)} />;
+  useEffect(() => {
+    if (!thinking) return;
+    const timer = window.setTimeout(() => setThinking(false), 900);
+    return () => window.clearTimeout(timer);
+  }, [thinking]);
+  if (route.simulation && mode === "demo")
+    return (
+      <Simulation
+        optionId={route.simulation}
+        initialSnapshot={route.offer ?? undefined}
+        onBack={() => navigate(chatHref(route.context, route.simulation))}
+      />
+    );
   return (
     <>
       <PageHeading
         title="Mitra bisnis AI Anda"
         subtitle="Ubah pertanyaan bisnis menjadi langkah terukur."
       />
-      <div className="chat-workspace">
+      <div className="chat-workspace chat-prototype">
         <div className="chat-title">
-          <Icon name="IconSpark" />
-          <h2>Tingkatkan penjualan sore</h2>
+          <Icon name="ChatSpark" />
+          <h2>{mode === "demo" ? fixture.title : "Pertanyaan bisnis Anda"}</h2>
         </div>
         <a className="caption muted" href="#overview">
           ← Kembali ke Ringkasan ·{" "}
@@ -41,70 +91,96 @@ export default function Chat({ mode }: { mode: Mode }) {
         </a>
         {mode === "demo" ? (
           <>
-            <p className="caption muted">HARI INI, 10.32 · DEMO</p>
-            <div className="user-message">
-              Promo mana yang paling efektif untuk meningkatkan penjualan sore
-              tanpa terlalu menurunkan margin?
-            </div>
-            <div className="stack">
-              <strong className="ai-name">Command AI · Simulasi</strong>
-              <p>
-                Pendapatan pukul 14.00–17.00 masih 18% di bawah rata-rata
-                harian. Dari transaksi dan promo sebelumnya, tiga pilihan ini
-                layak diuji.
-              </p>
-            </div>
-            <div className="recommendations">
-              {recommendations.map((item) => (
-                <section
-                  className={`recommendation ${item.id === "A" ? "recommended" : ""}`}
-                  key={item.id}
-                >
-                  <p className="caption ai-name">Rekomendasi {item.id}</p>
-                  <h2>{item.title}</h2>
-                  <p className="muted recommendation-description">
-                    {item.description}
-                  </p>
-                  <strong className="recommendation-impact">
-                    {item.impact}
-                  </strong>
-                  <p
-                    className={`caption ${item.id === "C" ? "warning" : "success"}`}
-                  >
-                    {item.risk}
-                  </p>
-                  <button
-                    className="text-button caption"
-                    onClick={() => setRationale(item.id)}
-                  >
-                    Lihat alasan ⌄
-                  </button>
-                  <div className="actions">
-                    <Button
-                      variant="secondary"
-                      onClick={() => setSelected(item.id)}
-                    >
-                      Simulasikan
-                    </Button>
-                    <Button onClick={() => setApproval(item.id)}>
-                      Setujui
-                    </Button>
-                  </div>
-                </section>
-              ))}
-            </div>
-            <Card>
-              <details open>
-                <summary>
-                  <strong>Mengapa A unggul ⌄</strong>
-                </summary>
-                <p className="muted rationale-copy">
-                  Dalam 4 promo terakhir, paket menaikkan nilai pesanan 14%.
-                  Margin kopi dan pastri masih memberi ruang untuk diskon
-                  ringan.
+            <p className="chat-timestamp muted">HARI INI, 10.32 · DEMO</p>
+            <div className="user-message">{fixture.prompt}</div>
+            {thinking ? (
+              <div className="demo-thinking" role="status">
+                <strong className="ai-name">Command AI ···</strong>
+                <p className="caption muted">
+                  Meninjau penjualan, margin, dan promo sebelumnya…
                 </p>
-              </details>
-            </Card>
+                <p className="caption muted">
+                  Pemutaran snapshot demo, bukan proses LLM.
+                </p>
+                <button
+                  className="text-button caption"
+                  onClick={() => setThinking(false)}
+                >
+                  Batalkan pratinjau
+                </button>
+              </div>
+            ) : fixture.response ? (
+              <>
+                <div className="stack">
+                  <strong className="ai-name">Command AI · Simulasi</strong>
+                  <p>{fixture.response}</p>
+                </div>
+                <div className="recommendations">
+                  {recommendations.map((item) => (
+                    <section
+                      aria-label={`Rekomendasi ${item.id}`}
+                      className={`recommendation ${item.id === "A" ? "recommended" : ""} ${route.option === item.id ? "selected" : ""}`}
+                      key={item.id}
+                    >
+                      <p className="caption ai-name">
+                        Rekomendasi {item.id}
+                        {route.option === item.id ? " ✓" : ""}
+                      </p>
+                      <h2>{item.title}</h2>
+                      <p className="muted recommendation-description">
+                        {item.description}
+                      </p>
+                      <strong className="recommendation-impact">
+                        {item.impact}
+                      </strong>
+                      <p
+                        className={`caption ${item.id === "C" ? "warning" : "success"}`}
+                      >
+                        {item.risk}
+                      </p>
+                      <button
+                        className="text-button caption"
+                        onClick={() => setRationale(item.id)}
+                      >
+                        Lihat alasan ⌄
+                      </button>
+                      <div className="actions">
+                        <Button
+                          variant="secondary"
+                          onClick={() =>
+                            navigate(simulationHref(route.context, item.id))
+                          }
+                        >
+                          Simulasikan
+                          {route.option === item.id ? ` ${item.id}` : ""}
+                        </Button>
+                        <Button
+                          disabled={route.option === item.id}
+                          onClick={() =>
+                            navigate(chatHref(route.context, item.id))
+                          }
+                        >
+                          {route.option === item.id ? "Dipilih ✓" : "Setujui"}
+                        </Button>
+                      </div>
+                    </section>
+                  ))}
+                </div>
+                <Card>
+                  <details open>
+                    <summary>
+                      <strong>{fixture.rationaleTitle} ⌄</strong>
+                    </summary>
+                    <p className="muted rationale-copy">{fixture.rationale}</p>
+                  </details>
+                </Card>
+              </>
+            ) : (
+              <Notice>
+                Snapshot rekomendasi untuk konteks ini belum tersedia. Tidak ada
+                jawaban AI atau proyeksi baru yang dibuat.
+              </Notice>
+            )}
           </>
         ) : (
           <Notice>
@@ -142,11 +218,13 @@ export default function Chat({ mode }: { mode: Mode }) {
             <button
               type="button"
               className="text-button caption"
-              onClick={() =>
-                setMessage(
-                  "Konteks outlet, periode, dan data transaksi belum dapat dilampirkan karena API konteks belum tersedia.",
-                )
-              }
+              onClick={() => {
+                if (mode === "demo") setContextOpen(true);
+                else
+                  setMessage(
+                    "Konteks outlet, periode, dan data transaksi belum dapat dilampirkan karena API konteks belum tersedia.",
+                  );
+              }}
             >
               ＋ Tambah konteks
             </button>
@@ -160,9 +238,19 @@ export default function Chat({ mode }: { mode: Mode }) {
             </Button>
           </div>
         </form>
+        {mode === "demo" && (
+          <button
+            className="text-button caption demo-replay"
+            onClick={() => setThinking(true)}
+            disabled={thinking}
+          >
+            Putar ulang respons demo
+          </button>
+        )}
         <p className="caption muted">
-          Estimasi AI pada demo bersifat ilustratif. Tidak ada approval atau
-          eksekusi bisnis melalui halaman ini.
+          {mode === "demo"
+            ? "Demo / simulasi · Pilihan dan jadwal hanya contoh lokal. Tidak ada approval atau eksekusi bisnis melalui halaman ini."
+            : "Tidak ada approval atau eksekusi bisnis melalui halaman ini."}
         </p>
       </div>
       {option && (
@@ -180,31 +268,42 @@ export default function Chat({ mode }: { mode: Mode }) {
           </Button>
         </Modal>
       )}
-      {approval && (
+      {contextOpen && (
         <Modal
-          title="Persetujuan bisnis belum tersedia"
-          onClose={() => setApproval(null)}
+          title="Tambah konteks demo"
+          onClose={() => setContextOpen(false)}
         >
-          <Notice tone="warning">
-            Autentikasi, pemeriksaan constraint, versi proposal, dan penyimpanan
-            approval belum tersedia. Tombol ini tidak menyetujui atau
-            menjalankan promo.
-          </Notice>
           <p className="muted">
-            Endpoint decision yang tersedia hanya sandbox transisi stateless.
-            Buka Pengaturan untuk pengujian terpisah setelah API terhubung.
+            Pilih snapshot ilustrasi. Tidak ada data server yang dilampirkan.
           </p>
-          <Button
-            onClick={() => {
-              setSelected(approval);
-              setApproval(null);
-            }}
-          >
-            Tinjau simulasi demo
-          </Button>
-          <Button variant="secondary" onClick={() => setApproval(null)}>
-            Batal
-          </Button>
+          <label className="field">
+            <span>Konteks percakapan</span>
+            <select
+              value={nextContext}
+              onChange={(event) =>
+                setNextContext(event.target.value as ChatContext)
+              }
+            >
+              {chatContexts.map((context) => (
+                <option value={context} key={context}>
+                  {chatFixtures[context].title}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="actions">
+            <Button variant="secondary" onClick={() => setContextOpen(false)}>
+              Batal
+            </Button>
+            <Button
+              onClick={() => {
+                setContextOpen(false);
+                navigate(chatHref(nextContext));
+              }}
+            >
+              Buka snapshot
+            </Button>
+          </div>
         </Modal>
       )}
     </>

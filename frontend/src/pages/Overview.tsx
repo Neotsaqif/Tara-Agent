@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { navigate, type Mode } from "../App";
+import { chatHref } from "../routing";
 import {
   asset,
   Button,
@@ -35,7 +36,12 @@ export function Insight({
       <p>{children}</p>
       <button
         className="text-button"
-        onClick={onClick ?? (() => navigate("Chat AI"))}
+        onClick={
+          onClick ??
+          (() => {
+            location.hash = chatHref("afternoon");
+          })
+        }
       >
         Analisis dengan AI →
       </button>
@@ -44,7 +50,11 @@ export function Insight({
 }
 export default function Overview({ mode }: { mode: Mode }) {
   const [category, setCategory] = useState<string | null>(null);
-  const [cell, setCell] = useState<string | null>(null);
+  const [cell, setCell] = useState<{
+    day: number;
+    hour: number;
+    value: number;
+  } | null>(null);
   return (
     <>
       <PageHeading
@@ -203,18 +213,47 @@ export default function Overview({ mode }: { mode: Mode }) {
                                     ? "var(--primary)"
                                     : "var(--navy)",
                         }}
-                        onClick={() =>
-                          setCell(
-                            `${days[day]} ${8 + hour * 2}.00 · ${value} transaksi ilustrasi`,
-                          )
-                        }
+                        onFocus={() => setCell({ day, hour, value })}
+                        onMouseEnter={() => setCell({ day, hour, value })}
+                        onKeyDown={(event) => {
+                          if (event.key === "Escape") setCell(null);
+                        }}
+                        onClick={() => setCell({ day, hour, value })}
                       />
                     ))}
                   </div>
                 ))}
               </div>
-              <p className="caption muted" role="status">
-                {cell ?? "Sepi ░ ▒ ▓ Ramai · Puncak: Sabtu 18.00"}
+              {cell && (
+                <div className="heatmap-tooltip" role="status">
+                  <strong>
+                    {
+                      [
+                        "Senin",
+                        "Selasa",
+                        "Rabu",
+                        "Kamis",
+                        "Jumat",
+                        "Sabtu",
+                        "Minggu",
+                      ][cell.day]
+                    }{" "}
+                    · {8 + cell.hour * 2}.00
+                  </strong>
+                  <span>{cell.value} transaksi</span>
+                  <span className="caption muted">
+                    {cell.day === 5 && cell.hour === 5
+                      ? "Pendapatan: Rp 6,8 jt"
+                      : "Pendapatan titik belum tersedia"}
+                  </span>
+                  <span className="caption muted">Data ilustrasi Figma</span>
+                  <button className="text-button" onClick={() => setCell(null)}>
+                    Tutup ×
+                  </button>
+                </div>
+              )}
+              <p className="caption muted">
+                Sepi ░ ▒ ▓ Ramai · Puncak: Sabtu 18.00
               </p>
             </Card>
           </div>

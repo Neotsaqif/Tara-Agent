@@ -4,6 +4,30 @@ import { describe, expect, it } from "vitest";
 import Memory from "./Memory";
 
 describe("Memory search", () => {
+  it.each([
+    ["Batasi diskon promo di bawah 20%", /utamakan paket dan poin loyalitas/],
+    [
+      "Kunjungan akhir pekan memuncak pukul 17.00–19.00",
+      /Transaksi Pusat Kota naik 32%/,
+    ],
+    [
+      "Jaga margin kotor di atas 60%",
+      /Gunakan target 60% saat membandingkan rekomendasi AI/,
+    ],
+  ])("shows the complete selected memory: %s", async (title, description) => {
+    const user = userEvent.setup();
+    render(<Memory mode="demo" />);
+    await user.click(screen.getByRole("button", { name: new RegExp(title) }));
+    const dialog = screen.getByRole("dialog", { name: title });
+    expect(within(dialog).getByText(description)).toBeInTheDocument();
+    expect(
+      within(dialog).getByText(/AI menggunakan memori ini/),
+    ).toBeInTheDocument();
+    expect(within(dialog).getByRole("link")).toHaveAttribute(
+      "href",
+      "#chat?context=memory",
+    );
+  });
   it("searches demo notes case-insensitively across descriptions and source metadata", async () => {
     const user = userEvent.setup();
     render(<Memory mode="demo" />);
@@ -59,10 +83,15 @@ describe("Memory search", () => {
       within(dialog).getByText(/bukan memori bisnis aktual/),
     ).toBeInTheDocument();
     expect(
-      within(dialog).getByRole("link", { name: "Diskusi dengan AI" }),
-    ).toHaveAttribute("href", "#chat");
+      within(dialog).getByRole("link", { name: "Diskusikan dengan AI" }),
+    ).toHaveAttribute("href", "#chat?context=memory");
+    expect(
+      within(dialog).getByText(
+        /AI menggunakan memori ini untuk membandingkan rekomendasi dan menilai risiko promo/,
+      ),
+    ).toBeInTheDocument();
     await user.click(
-      within(dialog).getByRole("button", { name: "Tutup catatan" }),
+      within(dialog).getByRole("button", { name: "Tutup memori" }),
     );
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(note).toHaveFocus();
