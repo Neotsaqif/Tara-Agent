@@ -2,6 +2,7 @@ import { useState } from "react";
 import { navigate, type Mode } from "../App";
 import { asset, Button, Card, EmptyState, Icon, Metrics, PageHeading } from "../components/ui";
 import { BarChart, LineChart } from "../components/Charts";
+import { HealthStatus } from "../components/ApiFoundation";
 import { categories, days, heatmap, overviewMetrics, products } from "../data/demo";
 
 export function Insight({ title, children, onClick }: { title: string; children: string; onClick?: () => void }) {
@@ -11,6 +12,7 @@ export default function Overview({ mode }: { mode: Mode }) {
   const [category, setCategory] = useState<string | null>(null);
   const [cell, setCell] = useState<string | null>(null);
   return <><PageHeading title="Sekilas kinerja bisnis Anda" subtitle={mode === "demo" ? "Minggu, 13 September 2026 · Kinerja baik di ketiga outlet" : "Hubungkan data bisnis untuk melihat kinerja terverifikasi."}><Button onClick={() => navigate("Chat AI")}>Tanya AI</Button></PageHeading>
+    {mode === "live" && <HealthStatus />}
     {mode === "live" ? <EmptyState title="Data bisnis belum tersedia">API ringkasan, penjualan, dan outlet belum tersedia. Pilih Demo Figma untuk meninjau desain dengan data ilustrasi, bukan sebagai pengganti kegagalan API.</EmptyState> : <>
       <Metrics items={overviewMetrics} />
       <div className="dashboard-primary"><LineChart title="Tren pendapatan" subtitle="1–13 September 2026 · Juta rupiah" /><div className="stack"><Insight title="Tingkatkan penjualan sore">Penjualan sore 18% di bawah rata-rata harian. Paket kopi + pastri dapat meningkatkan pendapatan.</Insight><Card className="alert-card"><h3>1 promo perlu perhatian</h3><p className="muted">Promo Akhir Pekan 8,4% di bawah prediksi. Tinjau sebelum pukul 18.00.</p><button className="text-button" onClick={() => { location.hash = "monitoring/weekend"; }}>Tinjau promo →</button></Card></div></div>

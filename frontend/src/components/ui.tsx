@@ -24,7 +24,8 @@ export function EmptyState({ title = "Belum ada data", children }: { title?: str
   return <Card className="empty-state"><h2>{title}</h2><p className="muted">{children}</p></Card>;
 }
 export function SelectField({ label, value, options, onChange, className = "" }: { label: string; value: string; options: string[]; onChange: (value: string) => void; className?: string }) {
-  return <label className={`field ${className}`}><span>{label}</span><span className="select-wrap"><select value={value} onChange={event => onChange(event.target.value)}>{options.map(option => <option key={option}>{option}</option>)}</select><Icon name="IconChevron" /></span></label>;
+  const id = useId();
+  return <label htmlFor={id} className={`field ${className}`}><span>{label}</span><span className="select-wrap"><select id={id} aria-label={label} value={value} onChange={event => onChange(event.target.value)}>{options.map(option => <option key={option}>{option}</option>)}</select><Icon name="IconChevron" /></span></label>;
 }
 export function Modal({ title, children, onClose }: { title: string; children: ReactNode; onClose: () => void }) {
   const ref = useRef<HTMLDialogElement>(null);
