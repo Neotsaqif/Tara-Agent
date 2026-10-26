@@ -55,4 +55,10 @@ No exhaustive screenshot baseline for every state/width, exact animation timing,
 8. `79de5f6` — shell integration, accessibility and prototype regression tests.
 9. `71249a9` — correct TypeScript role-query options in mode regression.
 
-All authors: `Rainer <rainersimanjuntak59@gmail.com>`. Branch: `feat/figma-responsive-frontend`. Remote: `https://github.com/Neotsaqif/Tara-Agent.git`. Final documentation commit follows this list; push result is reported separately after execution.
+## Approved-plan wording follow-up
+
+The explicitly approved plan was rechecked against the already completed implementation. Commit `271175d` replaces approval-like scheduling labels with `Simulasikan penjadwalan` and `Konfirmasi simulasi`, and states `Simulasi selesai; tidak ada campaign dibuat atau dikirim.` in the result. Component and browser regression expectations follow those labels.
+
+Reverification: 131 frontend tests, 33 Chromium tests, 7 backend tests, build/typecheck, lint and format passed; npm audit reports 0 vulnerabilities. The existing backend deprecation warning remains. No backend/business scope was added.
+
+All authors: `Rainer <rainersimanjuntak59@gmail.com>`.  Branch: `feat/figma-responsive-frontend`. Remote: `https://github.com/Neotsaqif/Tara-Agent.git`. Final documentation commit follows this list; push result is reported separately after execution.
