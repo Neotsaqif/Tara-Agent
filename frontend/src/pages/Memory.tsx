@@ -118,15 +118,19 @@ export default function Memory({ mode }: { mode: Mode }) {
           <p className="secondary-memory-meta">{selected.meta}</p>
           <p>{selected.description}</p>
           <p className="caption muted">{selected.source}</p>
+          <p className="muted">
+            AI menggunakan memori ini untuk membandingkan rekomendasi dan
+            menilai risiko promo.
+          </p>
           <p className="caption muted">
             Catatan demo Figma, bukan memori bisnis aktual. Belum tersimpan atau
             diterapkan melalui API.
           </p>
-          <a className="button primary" href="#chat">
-            Diskusi dengan AI
+          <a className="button primary" href="#chat?context=memory">
+            Diskusikan dengan AI
           </a>
           <Button variant="secondary" onClick={() => setSelected(null)}>
-            Tutup catatan
+            Tutup memori
           </Button>
         </Modal>
       )}

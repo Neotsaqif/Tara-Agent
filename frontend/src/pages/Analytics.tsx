@@ -93,8 +93,52 @@ function TrendChart({ tab }: { tab: AnalyticsTab }) {
   );
 }
 
+const tabRoutes: Record<AnalyticsTab, string> = {
+  Produk: "products",
+  Pelanggan: "customers",
+  Outlet: "outlets",
+  Margin: "margin",
+  Musiman: "seasonal",
+};
+function tabFromHash(): AnalyticsTab {
+  return (
+    analyticsTabs.find(
+      (item) => window.location.hash === `#analytics/${tabRoutes[item]}`,
+    ) ?? "Produk"
+  );
+}
+
 export default function Analytics({ mode }: { mode: Mode }) {
-  const [tab, setTab] = useState<AnalyticsTab>("Produk");
+  const [tab, setTab] = useState<AnalyticsTab>(tabFromHash);
+  const [updating, setUpdating] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const updateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const downloadUrls = useRef(new Set<string>());
+  useEffect(() => {
+    const sync = () => setTab(tabFromHash());
+    window.addEventListener("hashchange", sync);
+    return () => window.removeEventListener("hashchange", sync);
+  }, []);
+  useEffect(() => {
+    setUpdating(false);
+    const urls = downloadUrls.current;
+    return () => {
+      if (updateTimer.current) clearTimeout(updateTimer.current);
+      urls.forEach((url) => URL.revokeObjectURL(url));
+      urls.clear();
+    };
+  }, [mode]);
+  const previewUpdate = () => {
+    if (mode !== "demo") return;
+    if (updateTimer.current) clearTimeout(updateTimer.current);
+    setUpdating(true);
+    updateTimer.current = setTimeout(() => setUpdating(false), 800);
+  };
+  const selectTab = (value: AnalyticsTab) => {
+    setTab(value);
+    window.location.hash = `#analytics/${tabRoutes[value]}`;
+    previewUpdate();
+  };
   const [period, setPeriod] = useState("1–13 Sep 2026");
   const [outlet, setOutlet] = useState("Semua Outlet");
   const [category, setCategory] = useState("Semua kategori");
@@ -112,11 +156,13 @@ export default function Analytics({ mode }: { mode: Mode }) {
   useEffect(() => {
     setProduct(null);
     setExported(false);
+    setExportOpen(false);
+    setComparison(false);
   }, [mode, tab, period, outlet, category]);
   const exportCsv = () => {
     if (!available) return;
     const quote = (value: string) =>
-      `"${value.replace(/^[=+@−-]/, "'$&").replace(/"/g, '""')}"`;
+      `"${value.replace(/^(\s*)([=+@−-])/, "$1'$2").replace(/"/g, '""')}"`;
     const content = [
       ["DEMO / SIMULASI — bukan data bisnis aktual"],
       [data.table, period, outlet, category],
@@ -134,13 +180,14 @@ export default function Analytics({ mode }: { mode: Mode }) {
     document.body.append(link);
     link.click();
     link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    downloadUrls.current.add(url);
+    setExportOpen(false);
     setExported(true);
   };
   return (
     <div className="secondary-page analytics-page">
       <PageHeading title={data.title} subtitle={data.subtitle}>
-        <Button disabled={!available} onClick={exportCsv}>
+        <Button disabled={!available} onClick={() => setExportOpen(true)}>
           Ekspor laporan
         </Button>
       </PageHeading>
@@ -150,26 +197,36 @@ export default function Analytics({ mode }: { mode: Mode }) {
           label="Periode analitik"
           value={period}
           options={["1–13 Sep 2026", "1–31 Agu 2026"]}
-          onChange={setPeriod}
+          onChange={(value) => {
+            setPeriod(value);
+            previewUpdate();
+          }}
         />
         <SelectField
           className="compact-field"
           label="Outlet analitik"
           value={outlet}
           options={["Semua Outlet", "Pusat Kota", "Kampus", "Riverside"]}
-          onChange={setOutlet}
+          onChange={(value) => {
+            setOutlet(value);
+            previewUpdate();
+          }}
         />
         <SelectField
           className="compact-field"
           label="Kategori analitik"
           value={category}
           options={["Semua kategori", "Kopi", "Makanan", "Nonkopi", "Pastri"]}
-          onChange={setCategory}
+          onChange={(value) => {
+            setCategory(value);
+            previewUpdate();
+          }}
         />
         {tab === "Produk" && (
           <button
             className="secondary-compare"
-            aria-pressed={comparison}
+            aria-pressed={comparison && available}
+            disabled={!available}
             onClick={() => setComparison(!comparison)}
           >
             Bandingkan periode sebelumnya
@@ -189,7 +246,7 @@ export default function Analytics({ mode }: { mode: Mode }) {
             aria-selected={tab === item}
             aria-controls="analytics-panel"
             tabIndex={tab === item ? 0 : -1}
-            onClick={() => setTab(item)}
+            onClick={() => selectTab(item)}
             onKeyDown={(event) => {
               if (
                 !["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)
@@ -205,7 +262,7 @@ export default function Analytics({ mode }: { mode: Mode }) {
                         (event.key === "ArrowRight" ? 1 : -1) +
                         analyticsTabs.length) %
                       analyticsTabs.length;
-              setTab(analyticsTabs[next]);
+              selectTab(analyticsTabs[next]);
               document.getElementById(`analytics-tab-${next}`)?.focus();
             }}
           >
@@ -225,7 +282,7 @@ export default function Analytics({ mode }: { mode: Mode }) {
             atau data server yang diekspor.
           </Notice>
         )}
-        {comparison && tab === "Produk" && (
+        {comparison && available && tab === "Produk" && (
           <Notice>
             Perbandingan demo ditampilkan pada catatan KPI. Rincian periode
             sebelumnya belum tersedia; tidak ada perhitungan API yang
@@ -293,7 +350,7 @@ export default function Analytics({ mode }: { mode: Mode }) {
                     className={
                       tab === "Produk" ? "secondary-ai-link" : "button primary"
                     }
-                    href="#chat"
+                    href={`#chat?context=${tabRoutes[tab]}`}
                   >
                     Analisis dengan AI{tab === "Produk" ? " →" : ""}
                   </a>
@@ -304,7 +361,10 @@ export default function Analytics({ mode }: { mode: Mode }) {
                     <p className="muted">
                       Mulai dari produk laris dengan margin rendah.
                     </p>
-                    <a className="button primary" href="#chat">
+                    <a
+                      className="button primary"
+                      href={`#chat?context=${tabRoutes[tab]}`}
+                    >
                       Diskusi dengan AI
                     </a>
                   </Card>
@@ -324,6 +384,23 @@ export default function Analytics({ mode }: { mode: Mode }) {
           </>
         )}
       </div>
+      {updating && mode === "demo" && (
+        <div className="secondary-toast bottom" role="status">
+          Memperbarui analitik… · Simulasi lokal
+        </div>
+      )}
+      {exportOpen && available && (
+        <Modal title="Laporan siap" onClose={() => setExportOpen(false)}>
+          <p className="muted">
+            Demo ini memperagakan fitur laporan. Tampilan Analitik saat ini siap
+            diekspor sebagai CSV demo; tidak ada data server yang diekspor.
+          </p>
+          <Button onClick={exportCsv}>Unduh CSV demo</Button>
+          <Button variant="secondary" onClick={() => setExportOpen(false)}>
+            Batal
+          </Button>
+        </Modal>
+      )}
       {product && available && (
         <Modal title={product.name} onClose={() => setProduct(null)}>
           <p className="muted">Rincian ilustrasi Figma · 1–13 September 2026</p>
@@ -337,7 +414,10 @@ export default function Analytics({ mode }: { mode: Mode }) {
             Belum termasuk biaya operasional dan pajak. Tidak ada harga yang
             diubah.
           </p>
-          <a className="button primary" href="#chat">
+          <a
+            className="button primary"
+            href={`#chat?context=${tabRoutes[tab]}`}
+          >
             Diskusi dengan AI
           </a>
           <Button variant="secondary" onClick={() => setProduct(null)}>
