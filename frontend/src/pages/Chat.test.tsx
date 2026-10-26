@@ -9,9 +9,15 @@ afterEach(() => vi.unstubAllGlobals());
 describe("Chat local and demo boundaries", () => {
   it("keeps recommendations and simulated business context out of live mode", () => {
     render(<Chat mode="live" />);
-    expect(screen.getByText(/Pertanyaan di bawah hanya menjadi draft lokal/)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Simulasikan" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Setujui" })).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Pertanyaan di bawah hanya menjadi draft lokal/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Simulasikan" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Setujui" }),
+    ).not.toBeInTheDocument();
     expect(screen.getByText("Belum ada data konteks")).toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
   });
@@ -19,7 +25,9 @@ describe("Chat local and demo boundaries", () => {
   it("disables empty drafts, trims and clears submitted input, and makes no API request", async () => {
     const user = userEvent.setup();
     render(<Chat mode="live" />);
-    const input = screen.getByRole("textbox", { name: "Pertanyaan atau tujuan bisnis" });
+    const input = screen.getByRole("textbox", {
+      name: "Pertanyaan atau tujuan bisnis",
+    });
     const submit = screen.getByRole("button", { name: "Simpan draft ↑" });
     expect(submit).toBeDisabled();
     await user.type(input, "   ");
@@ -28,10 +36,16 @@ describe("Chat local and demo boundaries", () => {
     await user.type(input, "  Tingkatkan penjualan  ");
     expect(submit).toBeEnabled();
     await user.click(submit);
-    expect(screen.getByText("Draft lokal: Tingkatkan penjualan", { exact: true })).toBeInTheDocument();
+    expect(
+      screen.getByText("Draft lokal: Tingkatkan penjualan", { exact: true }),
+    ).toBeInTheDocument();
     expect(input).toHaveValue("");
     expect(submit).toBeDisabled();
-    expect(screen.getByText(/tidak ada jawaban AI atau rekomendasi baru yang dibuat/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /tidak ada jawaban AI atau rekomendasi baru yang dibuat/,
+      ),
+    ).toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
   });
 
@@ -39,18 +53,30 @@ describe("Chat local and demo boundaries", () => {
     const user = userEvent.setup();
     render(<Chat mode="live" />);
     await user.click(screen.getByRole("button", { name: "＋ Tambah konteks" }));
-    expect(screen.getByText(/Konteks outlet, periode, dan data transaksi belum dapat dilampirkan/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Konteks outlet, periode, dan data transaksi belum dapat dilampirkan/,
+      ),
+    ).toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
   });
 
   it("shows demo recommendations and opens rationale without approving a campaign", async () => {
     const user = userEvent.setup();
     render(<Chat mode="demo" />);
-    expect(screen.getAllByRole("button", { name: "Simulasikan" })).toHaveLength(3);
-    await user.click(screen.getAllByRole("button", { name: "Lihat alasan ⌄" })[0]);
+    expect(screen.getAllByRole("button", { name: "Simulasikan" })).toHaveLength(
+      3,
+    );
+    await user.click(
+      screen.getAllByRole("button", { name: "Lihat alasan ⌄" })[0],
+    );
     const dialog = screen.getByRole("dialog", { name: "Mengapa A unggul" });
-    expect(within(dialog).getByText(/bukan hasil perhitungan bisnis aktual/)).toBeInTheDocument();
-    await user.click(within(dialog).getByRole("button", { name: "Kembali ke chat" }));
+    expect(
+      within(dialog).getByText(/bukan hasil perhitungan bisnis aktual/),
+    ).toBeInTheDocument();
+    await user.click(
+      within(dialog).getByRole("button", { name: "Kembali ke chat" }),
+    );
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
   });
@@ -59,12 +85,26 @@ describe("Chat local and demo boundaries", () => {
     const user = userEvent.setup();
     render(<Chat mode="demo" />);
     await user.click(screen.getAllByRole("button", { name: "Setujui" })[0]);
-    const dialog = screen.getByRole("dialog", { name: "Persetujuan bisnis belum tersedia" });
-    expect(within(dialog).getByText(/Tombol ini tidak menyetujui atau menjalankan promo/)).toBeInTheDocument();
-    await user.click(within(dialog).getByRole("button", { name: "Tinjau simulasi demo" }));
-    expect(screen.getByRole("heading", { name: "Simulasikan sebelum menyetujui" })).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Kembali ke Chat AI" }));
-    expect(screen.getByRole("heading", { name: "Mitra bisnis AI Anda" })).toBeInTheDocument();
+    const dialog = screen.getByRole("dialog", {
+      name: "Persetujuan bisnis belum tersedia",
+    });
+    expect(
+      within(dialog).getByText(
+        /Tombol ini tidak menyetujui atau menjalankan promo/,
+      ),
+    ).toBeInTheDocument();
+    await user.click(
+      within(dialog).getByRole("button", { name: "Tinjau simulasi demo" }),
+    );
+    expect(
+      screen.getByRole("heading", { name: "Simulasikan sebelum menyetujui" }),
+    ).toBeInTheDocument();
+    await user.click(
+      screen.getByRole("button", { name: "Kembali ke Chat AI" }),
+    );
+    expect(
+      screen.getByRole("heading", { name: "Mitra bisnis AI Anda" }),
+    ).toBeInTheDocument();
     expect(fetch).not.toHaveBeenCalled();
   });
 
@@ -72,9 +112,15 @@ describe("Chat local and demo boundaries", () => {
     const user = userEvent.setup();
     const { rerender } = render(<Chat mode="demo" />);
     await user.click(screen.getAllByRole("button", { name: "Simulasikan" })[0]);
-    expect(screen.getByRole("heading", { name: "Simulasikan sebelum menyetujui" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Simulasikan sebelum menyetujui" }),
+    ).toBeInTheDocument();
     rerender(<Chat mode="live" />);
-    expect(screen.queryByRole("heading", { name: "Simulasikan sebelum menyetujui" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Simulasikan" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: "Simulasikan sebelum menyetujui" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Simulasikan" }),
+    ).not.toBeInTheDocument();
   });
 });

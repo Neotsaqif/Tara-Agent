@@ -4,7 +4,11 @@ export const overviewMetrics: Metric[] = [
   { label: "Pendapatan", value: "Rp 24,8 jt", note: "↗ 12,8% dari kemarin" },
   { label: "Laba", value: "Rp 8,2 jt", note: "↗ 8,4% dari kemarin" },
   { label: "Transaksi", value: "486", note: "↗ 10,2% dari kemarin" },
-  { label: "Rata-rata Nilai Pesanan", value: "Rp 51.029", note: "↗ 2,4% dari kemarin" },
+  {
+    label: "Rata-rata Nilai Pesanan",
+    value: "Rp 51.029",
+    note: "↗ 2,4% dari kemarin",
+  },
 ];
 export const products = [
   { name: "Latte Es", amount: "Rp 5,4 jt", percent: 100 },
@@ -20,4 +24,12 @@ export const categories = [
   { name: "Pastri", percent: 8, color: "var(--soft-blue)" },
 ];
 export const days = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
-export const heatmap = [[15,59,59,37,81,81,59,103],[81,15,15,103,37,37,59,59],[37,59,81,59,37,81,81,15],[59,37,81,81,59,103,59,37],[37,59,59,81,103,103,81,59],[59,81,103,81,103,125,103,81],[37,59,81,59,81,103,81,59]];
+export const heatmap = [
+  [15, 59, 59, 37, 81, 81, 59, 103],
+  [81, 15, 15, 103, 37, 37, 59, 59],
+  [37, 59, 81, 59, 37, 81, 81, 15],
+  [59, 37, 81, 81, 59, 103, 59, 37],
+  [37, 59, 59, 81, 103, 103, 81, 59],
+  [59, 81, 103, 81, 103, 125, 103, 81],
+  [37, 59, 81, 59, 81, 103, 81, 59],
+];

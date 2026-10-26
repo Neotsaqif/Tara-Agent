@@ -1,4 +1,207 @@
-.chat-workspace { width: 100%; max-width: 1040px; margin-inline: auto; display: flex; flex-direction: column; gap: 20px; }.chat-title { display: flex; align-items: center; gap: 12px; }.user-message { width: min(704px, 100%); background: var(--navy); border-radius: 12px; padding: 20px; color: white; font-size: 15px; line-height: 22px; overflow-wrap: anywhere; }.ai-name { color: var(--primary); font-weight: 600; }.recommendations { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 18px; }.recommendation { border: 1px solid var(--border); background: white; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }.recommendation.recommended { background: var(--tint); border-color: var(--soft-blue); }.recommendation h2 { color: var(--navy); }.recommendation-description { min-height: 40px; }.recommendation-impact { font-size: 20px; line-height: 29px; font-weight: 600; }.recommendation .actions { margin-top: auto; flex-wrap: wrap; gap: 8px; }.recommendation .button { flex: 1; padding-inline: 12px; }.rationale-copy { margin-top: 16px; font-size: 13px; }.chat-composer { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: grid; gap: 16px; }.chat-composer textarea { min-height: 64px; }.composer-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }.composer-actions .button { margin-left: auto; }.simulation-fields { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 24px; }.assumptions { padding-left: 20px; margin: 0; display: grid; gap: 12px; color: var(--muted); }.terms { padding: 20px; display: grid; gap: 12px; background: var(--canvas); border-radius: 8px; }.flow-toolbar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }.flow-toolbar .button { margin-left: auto; }.badge { padding: 8px 12px; background: #fffbeb; border-radius: 8px; font-size: 12px; }.badge.success { background: #f0fdf4; }.flow-tabs { align-self: flex-start; }.monitor-filters { display: grid; grid-template-columns: minmax(0,1fr) 220px 250px; gap: 16px; align-items: end; }.campaign-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; }.campaign-card { padding: 24px; }.campaign-impact { font-size: 28px; line-height: 41px; font-weight: 600; }.campaign-link { border-top: 1px solid var(--border); padding-top: 16px; font-size: 13px; margin-top: auto; }
-@media (max-width: 1199px) { .recommendations, .campaign-grid { gap: 16px; }.recommendation { padding: 16px; }.monitor-filters { grid-template-columns: minmax(0,1fr) 160px 160px; }.simulation-fields { gap: 16px; grid-template-columns: repeat(2,minmax(0,1fr)); } }
-@media (max-width: 767px) { .recommendations, .campaign-grid { grid-template-columns: minmax(0,1fr); }.recommendation-description { min-height: 0; }.recommendation .actions { flex-wrap: nowrap; }.monitor-filters { grid-template-columns: repeat(2,minmax(0,1fr)); }.search-field { grid-column: 1 / -1; }.composer-actions .caption.muted { width: 100%; order: 3; }.campaign-impact { font-size: 24px; } }
-@media (max-width: 599px) { .simulation-fields { grid-template-columns: minmax(0,1fr); }.flow-toolbar .button { margin-left: 0; }.chat-workspace { gap: 16px; } }
+.chat-workspace {
+  width: 100%;
+  max-width: 1040px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.chat-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.user-message {
+  width: min(704px, 100%);
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  font-size: 15px;
+  line-height: 22px;
+  overflow-wrap: anywhere;
+}
+.ai-name {
+  color: var(--primary);
+  font-weight: 600;
+}
+.recommendations {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.recommendation {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.recommendation.recommended {
+  background: var(--tint);
+  border-color: var(--soft-blue);
+}
+.recommendation h2 {
+  color: var(--navy);
+}
+.recommendation-description {
+  min-height: 40px;
+}
+.recommendation-impact {
+  font-size: 20px;
+  line-height: 29px;
+  font-weight: 600;
+}
+.recommendation .actions {
+  margin-top: auto;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.recommendation .button {
+  flex: 1;
+  padding-inline: 12px;
+}
+.rationale-copy {
+  margin-top: 16px;
+  font-size: 13px;
+}
+.chat-composer {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+.chat-composer textarea {
+  min-height: 64px;
+}
+.composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.composer-actions .button {
+  margin-left: auto;
+}
+.simulation-fields {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+.assumptions {
+  padding-left: 20px;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+  color: var(--muted);
+}
+.terms {
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+  background: var(--canvas);
+  border-radius: 8px;
+}
+.flow-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.flow-toolbar .button {
+  margin-left: auto;
+}
+.badge {
+  padding: 8px 12px;
+  background: #fffbeb;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.badge.success {
+  background: #f0fdf4;
+}
+.flow-tabs {
+  align-self: flex-start;
+}
+.monitor-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px 250px;
+  gap: 16px;
+  align-items: end;
+}
+.campaign-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.campaign-card {
+  padding: 24px;
+}
+.campaign-impact {
+  font-size: 28px;
+  line-height: 41px;
+  font-weight: 600;
+}
+.campaign-link {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  font-size: 13px;
+  margin-top: auto;
+}
+@media (max-width: 1199px) {
+  .recommendations,
+  .campaign-grid {
+    gap: 16px;
+  }
+  .recommendation {
+    padding: 16px;
+  }
+  .monitor-filters {
+    grid-template-columns: minmax(0, 1fr) 160px 160px;
+  }
+  .simulation-fields {
+    gap: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  .recommendations,
+  .campaign-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .recommendation-description {
+    min-height: 0;
+  }
+  .recommendation .actions {
+    flex-wrap: nowrap;
+  }
+  .monitor-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .search-field {
+    grid-column: 1 / -1;
+  }
+  .composer-actions .caption.muted {
+    width: 100%;
+    order: 3;
+  }
+  .campaign-impact {
+    font-size: 24px;
+  }
+}
+@media (max-width: 599px) {
+  .simulation-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .flow-toolbar .button {
+    margin-left: 0;
+  }
+  .chat-workspace {
+    gap: 16px;
+  }
+}

@@ -6,8 +6,12 @@ export default tseslint.config(
   { ignores: ["dist", "node_modules", "test-results", "playwright-report"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
-  { files: ["src/**/*.{ts,tsx}"], plugins: { "react-hooks": hooks }, rules: {
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
-  } },
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    plugins: { "react-hooks": hooks },
+    rules: {
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "warn",
+    },
+  },
 );
