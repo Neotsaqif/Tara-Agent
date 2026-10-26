@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { BarChart, LineChart } from "./Charts";
+import { BarChart, LineChart } from "../../src/components/Charts";
 
 describe("Figma chart snapshots", () => {
   it("shows exact revenue values with keyboard and dismisses with Escape", async () => {

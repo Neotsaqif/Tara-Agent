@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import ChatHistory from "./ChatHistory";
+import ChatHistory from "../../src/components/ChatHistory";
 
 describe("fixture conversation history", () => {
   it("filters fixture routes and expands the full static list", async () => {

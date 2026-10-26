@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import Memory from "./Memory";
+import Memory from "../../src/pages/Memory";
 
 describe("Memory search", () => {
   it.each([

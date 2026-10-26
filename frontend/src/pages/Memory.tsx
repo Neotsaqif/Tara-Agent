@@ -1,7 +1,7 @@
 import { useEffect, useId, useState } from "react";
 import type { Mode } from "../App";
 import { Button, EmptyState, Modal } from "../components/ui";
-import "./secondary.css";
+import "../styles/pages/secondary.css";
 
 const demoNotes = [
   {

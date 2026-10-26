@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { chatHref, pageHref, parseRoute, simulationHref } from "./routing";
+import { chatHref, pageHref, parseRoute, simulationHref } from "../src/routing";
 
 describe("typed prototype routes", () => {
   it.each([

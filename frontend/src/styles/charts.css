@@ -1,0 +1,153 @@
+.chart-card {
+  gap: 16px;
+}
+.line-chart,
+.bar-chart {
+  position: relative;
+  height: 200px;
+  margin-top: 8px;
+}
+.chart-grid {
+  position: absolute;
+  inset: 0 0 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.grid-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 10px;
+  height: 15px;
+}
+.grid-row span {
+  width: 28px;
+  flex-shrink: 0;
+}
+.grid-row i {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+}
+.series-area {
+  position: absolute;
+  left: 40px;
+  right: 0;
+  top: 8px;
+  height: 154px;
+}
+.series-area > img {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  inset: auto 0 0;
+}
+.overview-line .series-area > img {
+  top: 9px;
+  bottom: auto;
+}
+.series-area .secondary-series {
+  z-index: 0;
+}
+.chart-ticks {
+  position: absolute;
+  inset: auto 0 0 40px;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.chart-hitpoints {
+  position: absolute;
+  inset: 0 0 24px 30px;
+  display: flex;
+  justify-content: space-between;
+}
+.chart-hitpoints button {
+  background: transparent;
+  border: 0;
+  width: 40px;
+  border-radius: 8px;
+}
+.chart-hitpoints button:hover {
+  background: #2563eb08;
+}
+.chart-tooltip {
+  position: absolute;
+  left: 20%;
+  top: 50%;
+  max-width: 70%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  font-size: 11px;
+  box-shadow: 0 4px 12px #10182816;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 2;
+}
+
+.chart-legend {
+  font-size: 12px;
+  color: var(--primary);
+}
+.bars {
+  position: absolute;
+  inset: 0 0 0 40px;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  gap: 8px;
+}
+.bars > div {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  flex: 1;
+}
+.bars button {
+  width: min(38px, 100%);
+  border: 0;
+  border-radius: 6px 6px 0 0;
+}
+.bars span {
+  color: var(--muted);
+  font-size: 10px;
+  height: 22px;
+}
+
+@media (max-width: 767px) {
+  .chart-ticks {
+    font-size: 9px;
+  }
+}
+@media (max-width: 599px) {
+  .chart-ticks span:nth-child(even) {
+    visibility: hidden;
+  }
+  .line-chart,
+  .bar-chart {
+    height: 190px;
+  }
+  .grid-row {
+    gap: 4px;
+  }
+  .grid-row span {
+    width: 24px;
+  }
+  .series-area {
+    left: 28px;
+  }
+  .chart-ticks {
+    left: 28px;
+  }
+}

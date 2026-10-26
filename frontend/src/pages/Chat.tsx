@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import type { Mode } from "../App";
+import { Button, Icon, Modal, Notice, PageHeading } from "../components/ui";
 import {
-  Button,
-  Card,
-  Icon,
-  Modal,
-  Notice,
-  PageHeading,
-} from "../components/ui";
+  AiBubble,
+  ChatComposer,
+  SelectionBubble,
+  UserBubble,
+} from "../components/chat";
 import { recommendations } from "../data/campaigns-demo";
 import {
   chatContexts,
@@ -18,8 +17,8 @@ import {
   type ChatContext,
 } from "../data/chat-demo";
 import Simulation from "./Simulation";
-import "./flows.css";
-import "./chat-prototype.css";
+import "../styles/pages/flows.css";
+import "../styles/pages/chat-prototype.css";
 
 export default function Chat({ mode }: { mode: Mode }) {
   const [hash, setHash] = useState(location.hash);
@@ -51,7 +50,6 @@ function ChatView({
 }) {
   const route = readChatRoute(hash);
   const fixture = chatFixtures[route.context];
-  const [draft, setDraft] = useState("");
   const [objective, setObjective] = useState("");
   const [message, setMessage] = useState("");
   const [thinking, setThinking] = useState(false);
@@ -79,7 +77,7 @@ function ChatView({
         subtitle="Ubah pertanyaan bisnis menjadi langkah terukur."
       />
       <div className="chat-workspace chat-prototype">
-        <div className="chat-title">
+        <div className="chat-title d-flex align-items-center gap-3">
           <Icon name="ChatSpark" />
           <h2>{mode === "demo" ? fixture.title : "Pertanyaan bisnis Anda"}</h2>
         </div>
@@ -92,7 +90,13 @@ function ChatView({
         {mode === "demo" ? (
           <>
             <p className="chat-timestamp muted">HARI INI, 10.32 · DEMO</p>
-            <div className="user-message">{fixture.prompt}</div>
+            <UserBubble
+              message={{
+                type: "user",
+                id: "fixture-prompt",
+                content: fixture.prompt,
+              }}
+            />
             {thinking ? (
               <div className="demo-thinking" role="status">
                 <strong className="ai-name">Command AI ···</strong>
@@ -111,69 +115,39 @@ function ChatView({
               </div>
             ) : fixture.response ? (
               <>
-                <div className="stack">
-                  <strong className="ai-name">Command AI · Simulasi</strong>
-                  <p>{fixture.response}</p>
-                </div>
-                <div className="recommendations">
-                  {recommendations.map((item) => (
-                    <section
-                      aria-label={`Rekomendasi ${item.id}`}
-                      className={`recommendation ${item.id === "A" ? "recommended" : ""} ${route.option === item.id ? "selected" : ""}`}
-                      key={item.id}
-                    >
-                      <p className="caption ai-name">
-                        Rekomendasi {item.id}
-                        {route.option === item.id ? " ✓" : ""}
-                      </p>
-                      <h2>{item.title}</h2>
-                      <p className="muted recommendation-description">
-                        {item.description}
-                      </p>
-                      <strong className="recommendation-impact">
-                        {item.impact}
-                      </strong>
-                      <p
-                        className={`caption ${item.id === "C" ? "warning" : "success"}`}
-                      >
-                        {item.risk}
-                      </p>
-                      <button
-                        className="text-button caption"
-                        onClick={() => setRationale(item.id)}
-                      >
-                        Lihat alasan ⌄
-                      </button>
-                      <div className="actions">
-                        <Button
-                          variant="secondary"
-                          onClick={() =>
-                            navigate(simulationHref(route.context, item.id))
-                          }
-                        >
-                          Simulasikan
-                          {route.option === item.id ? ` ${item.id}` : ""}
-                        </Button>
-                        <Button
-                          disabled={route.option === item.id}
-                          onClick={() =>
-                            navigate(chatHref(route.context, item.id))
-                          }
-                        >
-                          {route.option === item.id ? "Dipilih ✓" : "Setujui"}
-                        </Button>
-                      </div>
-                    </section>
-                  ))}
-                </div>
-                <Card>
-                  <details open>
-                    <summary>
-                      <strong>{fixture.rationaleTitle} ⌄</strong>
-                    </summary>
-                    <p className="muted rationale-copy">{fixture.rationale}</p>
-                  </details>
-                </Card>
+                <AiBubble
+                  message={{
+                    type: "ai_text",
+                    id: "fixture-response",
+                    content: fixture.response,
+                    label: "Command AI · Simulasi",
+                  }}
+                />
+                <SelectionBubble
+                  message={{
+                    type: "selection",
+                    id: "demo-recommendations",
+                    options: recommendations.map((item) => ({
+                      ...item,
+                      id: item.id as "A" | "B" | "C",
+                      feasible: item.id !== "C",
+                      unfeasibleReason:
+                        item.id === "C"
+                          ? "Margin ilustrasi 55% di bawah batas aman target 60%"
+                          : undefined,
+                    })),
+                    selectedOptionId: route.option,
+                    rationaleTitle: fixture.rationaleTitle,
+                    rationale: fixture.rationale,
+                  }}
+                  onSelectOption={(optionId) =>
+                    navigate(chatHref(route.context, optionId))
+                  }
+                  onSimulateOption={(optionId) =>
+                    navigate(simulationHref(route.context, optionId))
+                  }
+                  onViewRationale={(optionId) => setRationale(optionId)}
+                />
               </>
             ) : (
               <Notice>
@@ -190,54 +164,36 @@ function ChatView({
           </Notice>
         )}
         {objective && (
-          <div className="user-message">Draft lokal: {objective}</div>
+          <UserBubble
+            message={{
+              type: "user",
+              id: "local-draft",
+              content: objective,
+              isDraft: true,
+            }}
+          />
         )}
         {message && <Notice>{message}</Notice>}
-        <form
-          className="chat-composer"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (!draft.trim()) return;
-            setObjective(draft.trim());
-            setDraft("");
+        <ChatComposer
+          onSubmitDraft={(submittedDraft) => {
+            setObjective(submittedDraft);
             setMessage(
               "Draft tersedia selama halaman ini terbuka. API chat belum tersedia; tidak ada jawaban AI atau rekomendasi baru yang dibuat.",
             );
           }}
-        >
-          <label className="field">
-            <span>Pertanyaan atau tujuan bisnis</span>
-            <textarea
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder="Tanyakan lebih lanjut atau ubah rekomendasi…"
-              maxLength={4000}
-            />
-          </label>
-          <div className="composer-actions">
-            <button
-              type="button"
-              className="text-button caption"
-              onClick={() => {
-                if (mode === "demo") setContextOpen(true);
-                else
-                  setMessage(
-                    "Konteks outlet, periode, dan data transaksi belum dapat dilampirkan karena API konteks belum tersedia.",
-                  );
-              }}
-            >
-              ＋ Tambah konteks
-            </button>
-            <span className="caption muted">
-              {mode === "demo"
-                ? "Semua outlet · 90 hari ilustrasi"
-                : "Belum ada data konteks"}
-            </span>
-            <Button type="submit" disabled={!draft.trim()}>
-              Simpan draft ↑
-            </Button>
-          </div>
-        </form>
+          onAddContext={() => {
+            if (mode === "demo") setContextOpen(true);
+            else
+              setMessage(
+                "Konteks outlet, periode, dan data transaksi belum dapat dilampirkan karena API konteks belum tersedia.",
+              );
+          }}
+          contextHint={
+            mode === "demo"
+              ? "Semua outlet · 90 hari ilustrasi"
+              : "Belum ada data konteks"
+          }
+        />
         {mode === "demo" && (
           <button
             className="text-button caption demo-replay"

@@ -19,7 +19,7 @@ import {
   productMargins,
   type AnalyticsTab,
 } from "../data/analytics-demo";
-import "./secondary.css";
+import "../styles/pages/secondary.css";
 
 function TrendChart({ tab }: { tab: AnalyticsTab }) {
   const data = analyticsDemo[tab];

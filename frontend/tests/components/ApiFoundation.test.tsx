@@ -1,11 +1,14 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { api } from "../api/client";
-import DecisionSandbox, { HealthStatus } from "./ApiFoundation";
+import { api } from "../../src/api/client";
+import DecisionSandbox, {
+  HealthStatus,
+} from "../../src/components/ApiFoundation";
 
-vi.mock("../api/client", async (importOriginal) => {
-  const original = await importOriginal<typeof import("../api/client")>();
+vi.mock("../../src/api/client", async (importOriginal) => {
+  const original =
+    await importOriginal<typeof import("../../src/api/client")>();
   return { ...original, api: { health: vi.fn(), decision: vi.fn() } };
 });
 beforeEach(() => vi.resetAllMocks());

@@ -3,12 +3,17 @@ __pycache__/
 .pytest_cache/
 .venv/
 .env
+.env.*
+!.env.example
 node_modules/
 .next/
 dist/
 *.tsbuildinfo
 coverage/
 *.db
+*.db-journal
+*.db-shm
+*.db-wal
 .DS_Store
 playwright-report/
 test-results/

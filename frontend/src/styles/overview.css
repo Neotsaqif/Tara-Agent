@@ -1,0 +1,201 @@
+.dashboard-primary {
+  display: grid;
+  grid-template-columns: minmax(0, 764fr) minmax(0, 356fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.dashboard-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 450fr) minmax(0, 670fr);
+  gap: 24px;
+}
+.insight {
+  background: var(--tint);
+  color: var(--navy);
+  padding: 24px;
+  border-radius: var(--radius-card);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.alert-card {
+  padding: 20px;
+  font-size: 13px;
+}
+.alert-card h3 {
+  font-size: 14px;
+}
+
+.heatmap-tooltip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px #1018281a;
+}
+
+.donut-content {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.donut {
+  position: relative;
+  width: 210px;
+  height: 210px;
+  flex-shrink: 0;
+}
+.donut img {
+  position: absolute;
+}
+.donut-coffee {
+  left: 102px;
+  top: 0;
+}
+.donut-food {
+  left: 0;
+  top: 95.6px;
+}
+.donut-noncoffee {
+  left: 0;
+  top: 12.6px;
+}
+.donut-pastry {
+  left: 52.85px;
+  top: 0;
+}
+.donut-total {
+  position: absolute;
+  inset: 75px 0 auto;
+  display: grid;
+  text-align: center;
+  gap: 4px;
+}
+.donut-total strong {
+  font-size: 22px;
+  font-weight: 600;
+}
+.donut-total span {
+  font-size: 9px;
+  color: var(--muted);
+}
+.category-list {
+  display: grid;
+  gap: 12px;
+  flex: 1;
+  min-width: 150px;
+}
+.category-list button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  min-height: 32px;
+  text-align: left;
+}
+.category-list button[aria-pressed="true"] {
+  background: var(--tint);
+}
+.category-list i {
+  width: 10px;
+  height: 10px;
+}
+.category-list span {
+  flex: 1;
+  font-size: 13px;
+  color: var(--muted);
+}
+.product-rank {
+  display: grid;
+  gap: 6px;
+}
+.product-rank > div:first-child {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+}
+.product-rank strong {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+}
+.product-progress {
+  height: 4px;
+  background: var(--primary);
+}
+.heatmap {
+  display: grid;
+  grid-template-columns: 30px repeat(8, minmax(0, 1fr));
+  gap: 8px;
+}
+.heat-row {
+  display: contents;
+}
+.heat-label {
+  font-size: 10px;
+  color: var(--muted);
+  align-self: center;
+}
+.heatmap button {
+  min-width: 0;
+  height: 24px;
+  border: 0;
+  border-radius: 6px;
+}
+
+@media (max-width: 1199px) {
+  .dashboard-primary {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 16px;
+  }
+  .two-columns,
+  .dashboard-bottom {
+    gap: 16px;
+  }
+  .donut-content {
+    justify-content: center;
+    gap: 16px;
+  }
+}
+@media (max-width: 767px) {
+  .dashboard-primary,
+  .two-columns,
+  .dashboard-bottom {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dashboard-primary .stack {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .donut-content {
+    flex-wrap: nowrap;
+  }
+}
+@media (max-width: 599px) {
+  .dashboard-primary .stack {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .insight {
+    padding: 20px;
+  }
+  .donut-content {
+    flex-wrap: wrap;
+  }
+  .category-list {
+    min-width: 120px;
+  }
+  .heatmap {
+    gap: 5px;
+    grid-template-columns: 26px repeat(8, minmax(0, 1fr));
+  }
+}
