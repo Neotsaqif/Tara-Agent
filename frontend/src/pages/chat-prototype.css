@@ -1,0 +1,215 @@
+.chat-prototype {
+  margin-top: 24px;
+}
+.chat-prototype .recommendation h2,
+.chat-prototype .recommendation-description,
+.chat-prototype .recommendation-impact {
+  max-width: 248px;
+}
+.chat-prototype .recommendation-description {
+  line-height: 20px;
+}
+.chat-prototype .recommendation .caption {
+  line-height: 17px;
+}
+.chat-prototype .recommendation .actions {
+  flex-wrap: nowrap;
+}
+.chat-prototype .recommendation summary {
+  list-style: none;
+}
+.chat-prototype .chat-timestamp {
+  font-size: 10px;
+  line-height: 15px;
+  font-weight: 500;
+}
+.chat-prototype .recommendation.selected {
+  border: 2px solid var(--primary);
+  padding: 19px;
+  box-shadow: 0 2px 4px rgb(16 24 40 / 8%);
+}
+.chat-prototype .recommendation {
+  min-height: 302px;
+}
+.chat-prototype .recommendation .button {
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+.chat-prototype .demo-replay {
+  align-self: flex-start;
+}
+.demo-thinking {
+  background: var(--tint);
+  padding: 16px;
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+}
+.simulation-prototype {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+.simulation-notice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.simulation-prototype .page-heading {
+  margin-bottom: 0;
+}
+.simulation-prototype .assumptions {
+  gap: 0;
+}
+.simulation-prototype .snapshot-selector {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 24px;
+  align-items: center;
+}
+.snapshot-chart {
+  height: 200px;
+  position: relative;
+  width: 100%;
+}
+.snapshot-grid {
+  position: absolute;
+  inset: 8px 18px 38px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.snapshot-grid > div {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  height: 1px;
+}
+.snapshot-grid span {
+  width: 16px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.snapshot-grid i {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.snapshot-series {
+  position: absolute;
+  inset: 8px 18px 38px 40px;
+  overflow: visible;
+}
+.snapshot-series-viewport {
+  position: relative;
+  height: 154px;
+  width: 1038.12px;
+  transform-origin: left bottom;
+}
+.snapshot-series img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  max-width: none;
+}
+.snapshot-ticks {
+  position: absolute;
+  left: 40px;
+  right: 8px;
+  bottom: 2px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+}
+.demo-scheduled-check {
+  width: 48px;
+  height: 48px;
+  order: -1;
+}
+.chat-history-prototype {
+  min-width: 0;
+  width: 100%;
+}
+.chat-new {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--canvas);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.chat-history-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--canvas);
+  font: inherit;
+  font-size: 12px;
+}
+.chat-history-prototype .conversation-history {
+  display: block;
+  padding: 0;
+}
+.chat-history-prototype .conversation-history summary {
+  padding: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.chat-history-prototype .conversation-history a {
+  display: block;
+  padding: 8px;
+  font-size: 12px;
+  line-height: 18px;
+  border-radius: 8px;
+  color: var(--muted);
+}
+.chat-history-prototype .conversation-history a:hover {
+  color: var(--primary);
+  background: var(--tint);
+}
+.chat-history-note,
+.chat-history-group {
+  font-size: 10px;
+  line-height: 18px;
+  color: var(--muted);
+  margin-block: 4px;
+}
+.chat-history-prototype .chat-history-all {
+  font-size: 11px;
+  padding: 8px;
+  text-align: left;
+}
+.chat-history-prototype .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (max-width: 1199px) {
+  .chat-prototype .recommendation.selected {
+    padding: 15px;
+  }
+  .chat-prototype .recommendation .button {
+    flex: 1;
+  }
+}
+@media (max-width: 767px) {
+  .simulation-prototype .snapshot-selector {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .chat-prototype .recommendation {
+    min-height: auto;
+  }
+}
