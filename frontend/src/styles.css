@@ -843,6 +843,20 @@ tbody th {
   font-size: 11px;
   box-shadow: 0 4px 12px #10182816;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 2;
+}
+.heatmap-tooltip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px #1018281a;
 }
 .chart-legend {
   font-size: 12px;
