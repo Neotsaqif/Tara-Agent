@@ -11,8 +11,11 @@ import {
 import {
   AiBubble,
   ChatComposer,
+  SelectionBubble,
   UserBubble,
   type AiTextMessage,
+  type RecommendationOption,
+  type SelectionMessage,
   type UserMessage,
 } from "../components/chat";
 import { recommendations } from "../data/campaigns-demo";
@@ -131,65 +134,31 @@ function ChatView({
                     label: "Command AI · Simulasi",
                   }}
                 />
-                <div className="recommendations">
-                  {recommendations.map((item) => (
-                    <section
-                      aria-label={`Rekomendasi ${item.id}`}
-                      className={`recommendation ${item.id === "A" ? "recommended" : ""} ${route.option === item.id ? "selected" : ""}`}
-                      key={item.id}
-                    >
-                      <p className="caption ai-name">
-                        Rekomendasi {item.id}
-                        {route.option === item.id ? " ✓" : ""}
-                      </p>
-                      <h2>{item.title}</h2>
-                      <p className="muted recommendation-description">
-                        {item.description}
-                      </p>
-                      <strong className="recommendation-impact">
-                        {item.impact}
-                      </strong>
-                      <p
-                        className={`caption ${item.id === "C" ? "warning" : "success"}`}
-                      >
-                        {item.risk}
-                      </p>
-                      <button
-                        className="text-button caption"
-                        onClick={() => setRationale(item.id)}
-                      >
-                        Lihat alasan ⌄
-                      </button>
-                      <div className="actions">
-                        <Button
-                          variant="secondary"
-                          onClick={() =>
-                            navigate(simulationHref(route.context, item.id))
-                          }
-                        >
-                          Simulasikan
-                          {route.option === item.id ? ` ${item.id}` : ""}
-                        </Button>
-                        <Button
-                          disabled={route.option === item.id}
-                          onClick={() =>
-                            navigate(chatHref(route.context, item.id))
-                          }
-                        >
-                          {route.option === item.id ? "Dipilih ✓" : "Setujui"}
-                        </Button>
-                      </div>
-                    </section>
-                  ))}
-                </div>
-                <Card>
-                  <details open>
-                    <summary>
-                      <strong>{fixture.rationaleTitle} ⌄</strong>
-                    </summary>
-                    <p className="muted rationale-copy">{fixture.rationale}</p>
-                  </details>
-                </Card>
+                <SelectionBubble
+                  message={{
+                    type: "selection",
+                    id: "demo-recommendations",
+                    options: recommendations.map((item) => ({
+                      ...item,
+                      id: item.id as "A" | "B" | "C",
+                      feasible: item.id !== "C",
+                      unfeasibleReason:
+                        item.id === "C"
+                          ? "Margin ilustrasi 55% di bawah batas aman target 60%"
+                          : undefined,
+                    })),
+                    selectedOptionId: route.option,
+                    rationaleTitle: fixture.rationaleTitle,
+                    rationale: fixture.rationale,
+                  }}
+                  onSelectOption={(optionId) =>
+                    navigate(chatHref(route.context, optionId))
+                  }
+                  onSimulateOption={(optionId) =>
+                    navigate(simulationHref(route.context, optionId))
+                  }
+                  onViewRationale={(optionId) => setRationale(optionId)}
+                />
               </>
             ) : (
               <Notice>
