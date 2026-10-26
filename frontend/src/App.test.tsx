@@ -56,7 +56,7 @@ describe("workspace isolation", () => {
     render(<App />);
     await user.click(screen.getByRole("button", { name: "Demo Figma" }));
     await user.click(
-      screen.getAllByRole("button", { name: "Batalkan Promo", exact: true })[0],
+      screen.getAllByRole("button", { name: "Batalkan Promo" })[0],
     );
     const confirm = screen
       .getByRole("dialog")
@@ -67,7 +67,7 @@ describe("workspace isolation", () => {
     await user.click(screen.getByRole("button", { name: "API nyata" }));
     await user.click(screen.getByRole("button", { name: "Demo Figma" }));
     expect(
-      screen.getAllByRole("button", { name: "Batalkan Promo", exact: true })[0],
+      screen.getAllByRole("button", { name: "Batalkan Promo" })[0],
     ).toBeEnabled();
     expect(
       screen.queryByText(/Demo: jadwal dibatalkan secara lokal/),
