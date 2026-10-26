@@ -3,6 +3,9 @@ import { Button, DemoLabel, Icon, Modal, SelectField } from "./components/ui";
 import Overview from "./pages/Overview";
 import Chat from "./pages/Chat";
 import Monitoring from "./pages/Monitoring";
+import Analytics from "./pages/Analytics";
+import Memory from "./pages/Memory";
+import Settings from "./pages/Settings";
 
 export const pages = ["Ringkasan", "Chat AI", "Pemantauan", "Analitik", "Memori AI", "Pengaturan"] as const;
 export type Page = typeof pages[number];
@@ -39,5 +42,5 @@ export default function App() {
   const [page, setPage] = useState<Page>(readPage);
   const [mode, setMode] = useState<Mode>("live");
   useEffect(() => { const sync = () => setPage(readPage()); window.addEventListener("hashchange", sync); return () => window.removeEventListener("hashchange", sync); }, []);
-  return <Workspace page={page} mode={mode} setMode={setMode}>{page === "Ringkasan" ? <Overview mode={mode} /> : page === "Chat AI" ? <Chat mode={mode} /> : page === "Pemantauan" ? <Monitoring mode={mode} /> : <section className="card"><h1>{page}</h1><p className="muted">Data bisnis belum tersedia.</p></section>}</Workspace>;
+  return <Workspace page={page} mode={mode} setMode={setMode}>{page === "Ringkasan" ? <Overview mode={mode} /> : page === "Chat AI" ? <Chat mode={mode} /> : page === "Pemantauan" ? <Monitoring mode={mode} /> : page === "Analitik" ? <Analytics mode={mode} /> : page === "Memori AI" ? <Memory mode={mode} /> : <Settings mode={mode} />}</Workspace>;
 }
