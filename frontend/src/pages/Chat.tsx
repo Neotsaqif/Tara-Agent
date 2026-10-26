@@ -8,6 +8,13 @@ import {
   Notice,
   PageHeading,
 } from "../components/ui";
+import {
+  AiBubble,
+  ChatComposer,
+  UserBubble,
+  type AiTextMessage,
+  type UserMessage,
+} from "../components/chat";
 import { recommendations } from "../data/campaigns-demo";
 import {
   chatContexts,
@@ -51,7 +58,6 @@ function ChatView({
 }) {
   const route = readChatRoute(hash);
   const fixture = chatFixtures[route.context];
-  const [draft, setDraft] = useState("");
   const [objective, setObjective] = useState("");
   const [message, setMessage] = useState("");
   const [thinking, setThinking] = useState(false);
@@ -92,7 +98,13 @@ function ChatView({
         {mode === "demo" ? (
           <>
             <p className="chat-timestamp muted">HARI INI, 10.32 · DEMO</p>
-            <div className="user-message">{fixture.prompt}</div>
+            <UserBubble
+              message={{
+                type: "user",
+                id: "fixture-prompt",
+                content: fixture.prompt,
+              }}
+            />
             {thinking ? (
               <div className="demo-thinking" role="status">
                 <strong className="ai-name">Command AI ···</strong>
@@ -111,10 +123,14 @@ function ChatView({
               </div>
             ) : fixture.response ? (
               <>
-                <div className="stack">
-                  <strong className="ai-name">Command AI · Simulasi</strong>
-                  <p>{fixture.response}</p>
-                </div>
+                <AiBubble
+                  message={{
+                    type: "ai_text",
+                    id: "fixture-response",
+                    content: fixture.response,
+                    label: "Command AI · Simulasi",
+                  }}
+                />
                 <div className="recommendations">
                   {recommendations.map((item) => (
                     <section
@@ -190,54 +206,36 @@ function ChatView({
           </Notice>
         )}
         {objective && (
-          <div className="user-message">Draft lokal: {objective}</div>
+          <UserBubble
+            message={{
+              type: "user",
+              id: "local-draft",
+              content: objective,
+              isDraft: true,
+            }}
+          />
         )}
         {message && <Notice>{message}</Notice>}
-        <form
-          className="chat-composer"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (!draft.trim()) return;
-            setObjective(draft.trim());
-            setDraft("");
+        <ChatComposer
+          onSubmitDraft={(submittedDraft) => {
+            setObjective(submittedDraft);
             setMessage(
               "Draft tersedia selama halaman ini terbuka. API chat belum tersedia; tidak ada jawaban AI atau rekomendasi baru yang dibuat.",
             );
           }}
-        >
-          <label className="field">
-            <span>Pertanyaan atau tujuan bisnis</span>
-            <textarea
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              placeholder="Tanyakan lebih lanjut atau ubah rekomendasi…"
-              maxLength={4000}
-            />
-          </label>
-          <div className="composer-actions d-flex align-items-center flex-wrap gap-3">
-            <button
-              type="button"
-              className="text-button caption"
-              onClick={() => {
-                if (mode === "demo") setContextOpen(true);
-                else
-                  setMessage(
-                    "Konteks outlet, periode, dan data transaksi belum dapat dilampirkan karena API konteks belum tersedia.",
-                  );
-              }}
-            >
-              ＋ Tambah konteks
-            </button>
-            <span className="caption muted">
-              {mode === "demo"
-                ? "Semua outlet · 90 hari ilustrasi"
-                : "Belum ada data konteks"}
-            </span>
-            <Button type="submit" disabled={!draft.trim()}>
-              Simpan draft ↑
-            </Button>
-          </div>
-        </form>
+          onAddContext={() => {
+            if (mode === "demo") setContextOpen(true);
+            else
+              setMessage(
+                "Konteks outlet, periode, dan data transaksi belum dapat dilampirkan karena API konteks belum tersedia.",
+              );
+          }}
+          contextHint={
+            mode === "demo"
+              ? "Semua outlet · 90 hari ilustrasi"
+              : "Belum ada data konteks"
+          }
+        />
         {mode === "demo" && (
           <button
             className="text-button caption demo-replay"
