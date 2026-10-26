@@ -7,9 +7,8 @@
   gap: 20px;
 }
 .chat-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  /* Layout handled by Bootstrap d-flex align-items-center gap-3 */
+  font-size: 18px;
 }
 .user-message {
   width: min(704px, 100%);
@@ -80,10 +79,7 @@
   min-height: 64px;
 }
 .composer-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
+  /* Layout handled by Bootstrap d-flex align-items-center flex-wrap gap-3 */
 }
 .composer-actions .button {
   margin-left: auto;

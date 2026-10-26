@@ -79,7 +79,7 @@ function ChatView({
         subtitle="Ubah pertanyaan bisnis menjadi langkah terukur."
       />
       <div className="chat-workspace chat-prototype">
-        <div className="chat-title">
+        <div className="chat-title d-flex align-items-center gap-3">
           <Icon name="ChatSpark" />
           <h2>{mode === "demo" ? fixture.title : "Pertanyaan bisnis Anda"}</h2>
         </div>
@@ -214,7 +214,7 @@ function ChatView({
               maxLength={4000}
             />
           </label>
-          <div className="composer-actions">
+          <div className="composer-actions d-flex align-items-center flex-wrap gap-3">
             <button
               type="button"
               className="text-button caption"
