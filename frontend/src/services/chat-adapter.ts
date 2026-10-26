@@ -1,8 +1,5 @@
 import { ApiError, API_BASE_URL } from "../api/client";
-import type {
-  ChatMessage,
-  RecommendationOption,
-} from "../components/chat/types";
+import type { ChatMessage } from "../components/chat/types";
 
 export type ChatRequest = {
   conversationId?: string;

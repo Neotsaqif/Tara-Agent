@@ -1,62 +1,67 @@
 .icon {
-  width: 16px;
-  height: 16px;
+  display: block;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
 }
+
 .button {
   display: inline-flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  min-height: 44px;
+  padding: 11px 18px;
+  border: 1px solid var(--border);
   border-radius: var(--radius);
-  border: 1px solid transparent;
-  font-weight: 500;
-  text-decoration: none;
-  min-height: 40px;
-}
-.button:hover {
-  text-decoration: none;
-}
-.button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  transition:
+    background 150ms,
+    transform 90ms;
 }
 .button.primary {
   background: var(--primary);
-  color: white;
-}
-.button.primary:hover:not(:disabled) {
-  background: #1d4ed8;
+  color: #fff;
 }
 .button.secondary {
-  background: white;
-  border-color: var(--border);
-  color: var(--text);
-}
-.button.secondary:hover:not(:disabled) {
-  background: var(--tint);
-  border-color: #bfdbfe;
+  background: var(--surface);
 }
 .button.danger {
-  background: #dc2626;
-  color: white;
+  background: var(--surface);
+  color: var(--danger);
 }
-.button.danger:hover:not(:disabled) {
-  background: #b91c1c;
+.button.primary:hover {
+  background: #1d4ed8;
+}
+.button.secondary:hover,
+.button.danger:hover {
+  background: var(--canvas);
+}
+.button:active {
+  transform: translateY(1px);
+}
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
 }
 .icon-button {
+  min-width: 44px;
+  min-height: 44px;
   display: inline-flex;
-  align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  align-items: center;
+  border: 0;
+  background: transparent;
   border-radius: var(--radius);
-  border: 1px solid var(--border);
-  background: white;
+  padding: 12px;
 }
 .icon-button:hover {
   background: var(--tint);
 }
+
 .page-heading {
   display: flex;
   align-items: flex-start;
@@ -283,17 +288,20 @@ th {
 tbody th {
   color: var(--text);
 }
+
 .stack {
   display: flex;
   flex-direction: column;
   gap: 16px;
   min-width: 0;
 }
+
 .two-columns {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
+
 .text-button {
   color: var(--primary);
   font-weight: 600;
@@ -315,13 +323,11 @@ tbody th {
     font-size: 24px;
   }
 }
-
 @media (max-width: 1023px) {
   .metrics {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-
 @media (max-width: 599px) {
   h1 {
     font-size: 24px;

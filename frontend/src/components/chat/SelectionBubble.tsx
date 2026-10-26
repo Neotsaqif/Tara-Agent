@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "../ui";
-import type { RecommendationOption, SelectionMessage } from "./types";
+import type { SelectionMessage } from "./types";
 
 export function SelectionBubble({
   message,
@@ -38,7 +38,7 @@ export function SelectionBubble({
           return (
             <section
               key={item.id}
-              aria-label={`Rekomendasi ${item.id}: ${item.title}`}
+              aria-label={`Rekomendasi ${item.id}`}
               className={`recommendation ${isRecommended ? "recommended" : ""} ${isSelected ? "selected" : ""}`}
             >
               <p className="caption ai-name">

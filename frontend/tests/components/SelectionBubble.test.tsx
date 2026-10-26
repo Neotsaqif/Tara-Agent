@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -81,18 +81,27 @@ describe("SelectionBubble", () => {
     const firstToggle = toggleBtns[0];
 
     expect(firstToggle).toHaveAttribute("aria-expanded", "false");
+    expect(firstToggle).toHaveAttribute("aria-controls", "rationale-content-A");
 
-    await user.click(firstToggle);
+    // Open via Enter key
+    firstToggle.focus();
+    await user.keyboard("{Enter}");
 
     expect(firstToggle).toHaveAttribute("aria-expanded", "true");
     expect(firstToggle).toHaveTextContent("Tutup alasan ⌃");
+    const region = screen.getByRole("region", {
+      name: "Alasan rekomendasi A",
+    });
+    expect(region).toBeInTheDocument();
+    expect(region).toHaveAttribute("id", "rationale-content-A");
     expect(
       screen.getByText("Paket menaikkan nilai pesanan 14%"),
     ).toBeInTheDocument();
 
-    // Close it
-    await user.click(firstToggle);
+    // Close via Space key
+    await user.keyboard(" ");
     expect(firstToggle).toHaveAttribute("aria-expanded", "false");
+    expect(region).not.toBeInTheDocument();
   });
 
   it("shows unfeasible reason when present in expanded rationale", async () => {

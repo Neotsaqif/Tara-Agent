@@ -4,6 +4,7 @@
   gap: 24px;
   align-items: start;
 }
+
 .dashboard-bottom {
   display: grid;
   grid-template-columns: minmax(0, 450fr) minmax(0, 670fr);
@@ -19,6 +20,7 @@
   gap: 12px;
   min-width: 0;
 }
+
 .alert-card {
   padding: 20px;
   font-size: 13px;
@@ -26,6 +28,7 @@
 .alert-card h3 {
   font-size: 14px;
 }
+
 .heatmap-tooltip {
   display: flex;
   flex-direction: column;
@@ -36,6 +39,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 16px #1018281a;
 }
+
 .donut-content {
   display: flex;
   gap: 32px;
@@ -163,7 +167,6 @@
     gap: 16px;
   }
 }
-
 @media (max-width: 767px) {
   .dashboard-primary,
   .two-columns,
@@ -178,7 +181,6 @@
     flex-wrap: nowrap;
   }
 }
-
 @media (max-width: 599px) {
   .dashboard-primary .stack {
     grid-template-columns: minmax(0, 1fr);

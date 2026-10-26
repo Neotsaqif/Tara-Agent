@@ -1,22 +1,11 @@
 import { useEffect, useState } from "react";
 import type { Mode } from "../App";
-import {
-  Button,
-  Card,
-  Icon,
-  Modal,
-  Notice,
-  PageHeading,
-} from "../components/ui";
+import { Button, Icon, Modal, Notice, PageHeading } from "../components/ui";
 import {
   AiBubble,
   ChatComposer,
   SelectionBubble,
   UserBubble,
-  type AiTextMessage,
-  type RecommendationOption,
-  type SelectionMessage,
-  type UserMessage,
 } from "../components/chat";
 import { recommendations } from "../data/campaigns-demo";
 import {

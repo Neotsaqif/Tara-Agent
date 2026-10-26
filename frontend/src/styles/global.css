@@ -34,10 +34,6 @@ a {
 a:hover {
   text-decoration: underline;
 }
-:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
 h1,
 h2,
 h3,
@@ -46,14 +42,21 @@ p {
 }
 h1 {
   font-size: 28px;
-  line-height: 38px;
   font-weight: 600;
-  letter-spacing: -0.02em;
+  line-height: 41px;
 }
 h2 {
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 18px;
   font-weight: 600;
+  line-height: 26px;
+}
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
 }
 .muted {
   color: var(--muted);
@@ -71,6 +74,7 @@ h2 {
 .warning {
   color: var(--warning);
 }
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
