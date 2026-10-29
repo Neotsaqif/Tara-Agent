@@ -54,20 +54,24 @@
   border-radius: 6px;
   overflow: hidden;
   background: var(--preview-bg);
-  --preview-bg: #f7f8fa;
-  --preview-surface: #fff;
+  --preview-bg: var(--preview-light-bg);
+  --preview-surface: var(--preview-light-surface);
 }
 .preview-dark {
-  --preview-bg: #111318;
-  --preview-surface: #262c36;
+  --preview-bg: var(--preview-dark-bg);
+  --preview-surface: var(--preview-dark-surface);
 }
 .preview-gray {
-  --preview-bg: #e5e7eb;
-  --preview-surface: #f9fafb;
+  --preview-bg: var(--preview-gray-bg);
+  --preview-surface: var(--preview-gray-surface);
 }
 .preview-system {
-  --preview-bg: linear-gradient(90deg, #f7f8fa 50%, #111318 50%);
-  --preview-surface: #7c899e;
+  --preview-bg: linear-gradient(
+    90deg,
+    var(--preview-light-bg) 50%,
+    var(--preview-dark-bg) 50%
+  );
+  --preview-surface: var(--preview-system-surface);
 }
 .appearance-preview > i {
   width: 22%;

@@ -70,15 +70,18 @@
   background: var(--tint);
   text-decoration: none;
 }
-.sidebar > nav,
 .sidebar > .brand,
 .sidebar > .brand-caption,
 .sidebar-bottom {
   flex-shrink: 0;
 }
-.sidebar > .chat-history-prototype {
-  min-height: 0;
+.sidebar-navigation-scroll {
+  min-height: 140px;
   overflow-y: auto;
+  flex: 1 0 140px;
+  scrollbar-width: thin;
+  padding: 4px;
+  margin: -4px;
 }
 .sidebar-bottom {
   margin-top: auto;

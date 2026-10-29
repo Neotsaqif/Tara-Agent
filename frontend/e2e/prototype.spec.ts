@@ -428,7 +428,7 @@ for (const width of widths) {
         name: "Buka navigasi",
         exact: true,
       });
-      const sidebar = page.getByRole("complementary", {
+      const sidebar = page.getByRole("dialog", {
         name: "Navigasi ruang kerja",
         exact: true,
       });
@@ -436,7 +436,10 @@ for (const width of widths) {
       await expect(page.locator(".main-shell")).toHaveAttribute("inert", "");
       await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
       await expect(
-        sidebar.getByRole("link", { name: "Command", exact: true }),
+        sidebar.getByRole("button", {
+          name: "Tutup panel navigasi",
+          exact: true,
+        }),
       ).toBeFocused();
       await page.keyboard.press("Shift+Tab");
       await expect(
@@ -444,7 +447,10 @@ for (const width of widths) {
       ).toBeFocused();
       await page.keyboard.press("Tab");
       await expect(
-        sidebar.getByRole("link", { name: "Command", exact: true }),
+        sidebar.getByRole("button", {
+          name: "Tutup panel navigasi",
+          exact: true,
+        }),
       ).toBeFocused();
       await page.keyboard.press("Escape");
       await expect(trigger).toBeFocused();

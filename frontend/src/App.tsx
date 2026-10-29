@@ -50,7 +50,7 @@ export function Workspace({
   useAppearance();
   const [menu, setMenu] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
-  const sidebar = useRef<HTMLElement>(null);
+  const sidebar = useRef<HTMLDivElement>(null);
   const shell = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!menu) return;
@@ -135,12 +135,12 @@ export function Workspace({
           onClick={() => setMenu(false)}
         />
       )}
-      <aside
+      <div
         ref={sidebar}
         className={`sidebar ${menu ? "open" : ""}`}
         id="workspace-navigation"
         aria-label="Navigasi ruang kerja"
-        role={menu ? "dialog" : undefined}
+        role={menu ? "dialog" : "complementary"}
         aria-modal={menu || undefined}
         onClick={(event) => {
           if ((event.target as HTMLElement).closest("a")) {
@@ -163,19 +163,21 @@ export function Workspace({
           <span>Command</span>
         </a>
         <p className="brand-caption">ANALITIK F&B</p>
-        <nav aria-label="Navigasi utama">
-          {pages.slice(0, 5).map((item, index) => (
-            <a
-              key={item}
-              href={`#${slugs[index]}`}
-              aria-current={page === item ? "page" : undefined}
-            >
-              <Icon name={icons[index]} />
-              <span>{item}</span>
-            </a>
-          ))}
-        </nav>
-        {page === "Chat AI" && <ChatHistory key={mode} mode={mode} />}
+        <div className="sidebar-navigation-scroll">
+          <nav aria-label="Navigasi utama">
+            {pages.slice(0, 5).map((item, index) => (
+              <a
+                key={item}
+                href={`#${slugs[index]}`}
+                aria-current={page === item ? "page" : undefined}
+              >
+                <Icon name={icons[index]} />
+                <span>{item}</span>
+              </a>
+            ))}
+          </nav>
+          {page === "Chat AI" && <ChatHistory key={mode} mode={mode} />}
+        </div>
         <div className="sidebar-bottom">
           <div className="connection">
             <strong>
@@ -209,7 +211,7 @@ export function Workspace({
             </div>
           </div>
         </div>
-      </aside>
+      </div>
       <div className="main-shell" ref={shell}>
         <header className="topbar">
           <button

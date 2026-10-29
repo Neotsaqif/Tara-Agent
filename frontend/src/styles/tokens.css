@@ -34,6 +34,13 @@
   --control-border: #98a2b3;
   --chart-primary: #2563eb;
   --chart-secondary: #172554;
+  --preview-light-bg: #f7f8fa;
+  --preview-light-surface: #fff;
+  --preview-dark-bg: #111318;
+  --preview-dark-surface: #262c36;
+  --preview-gray-bg: #e5e7eb;
+  --preview-gray-surface: #f9fafb;
+  --preview-system-surface: #7c899e;
   --space-4: 4px;
   --space-8: 8px;
   --space-12: 12px;
@@ -49,6 +56,8 @@
 }
 
 :root[data-theme="gray"] {
+  --muted: #515d70;
+  --primary: #1d4ed8;
   --canvas: #e5e7eb;
   --surface: #f9fafb;
   --surface-muted: #f0f1f3;
