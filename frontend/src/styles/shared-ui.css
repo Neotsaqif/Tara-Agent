@@ -23,7 +23,7 @@
 }
 .button.primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--primary-contrast);
 }
 .button.secondary {
   background: var(--surface);
@@ -33,7 +33,7 @@
   color: var(--danger);
 }
 .button.primary:hover {
-  background: #1d4ed8;
+  background: var(--primary-hover);
 }
 .button.secondary:hover,
 .button.danger:hover {
@@ -91,7 +91,7 @@
 }
 .metric {
   padding: 16px;
-  background: white;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   display: grid;
@@ -150,9 +150,9 @@
 input,
 select,
 textarea {
-  border: 1px solid var(--border);
+  border: 1px solid var(--control-border);
   border-radius: var(--radius);
-  background: white;
+  background: var(--surface);
   color: var(--text);
   padding: 11px 12px;
   min-height: 44px;
@@ -173,12 +173,12 @@ textarea::placeholder {
   font-size: 13px;
 }
 .notice.warning {
-  background: #fffbeb;
+  background: var(--warning-bg);
   color: var(--warning);
 }
 .notice.error {
-  background: #fef2f2;
-  color: #b91c1c;
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 .empty-state {
   padding: 40px 24px;
@@ -200,7 +200,7 @@ textarea::placeholder {
 .segmented {
   display: inline-flex;
   gap: 4px;
-  background: white;
+  background: var(--surface);
   border-radius: 8px;
   padding: 4px;
 }
@@ -229,7 +229,8 @@ textarea::placeholder {
   width: min(560px, calc(100% - 32px));
   max-height: calc(100dvh - 32px);
   overflow-y: auto;
-  box-shadow: 0 12px 40px #10182824;
+  box-shadow: 0 12px 40px var(--shadow);
+  background: var(--surface);
   color: var(--text);
 }
 .modal[open] {
@@ -238,7 +239,7 @@ textarea::placeholder {
   gap: 16px;
 }
 .modal::backdrop {
-  background: #10182866;
+  background: var(--backdrop);
 }
 .modal h2 {
   font-size: 28px;

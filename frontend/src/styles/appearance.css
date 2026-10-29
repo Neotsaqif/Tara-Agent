@@ -1,0 +1,98 @@
+.appearance-fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.appearance-fieldset legend {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.appearance-position,
+.appearance-themes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.appearance-choice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  min-width: 0;
+}
+.appearance-choice:has(input:checked) {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+  background: var(--tint);
+}
+.appearance-choice input {
+  accent-color: var(--primary);
+  min-height: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin: 0;
+}
+.appearance-theme {
+  flex-direction: column;
+  align-items: stretch;
+}
+.appearance-label {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.appearance-preview {
+  display: flex;
+  height: 72px;
+  border: 1px solid var(--control-border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--preview-bg);
+  --preview-bg: var(--preview-light-bg);
+  --preview-surface: var(--preview-light-surface);
+}
+.preview-dark {
+  --preview-bg: var(--preview-dark-bg);
+  --preview-surface: var(--preview-dark-surface);
+}
+.preview-gray {
+  --preview-bg: var(--preview-gray-bg);
+  --preview-surface: var(--preview-gray-surface);
+}
+.preview-system {
+  --preview-bg: linear-gradient(
+    90deg,
+    var(--preview-light-bg) 50%,
+    var(--preview-dark-bg) 50%
+  );
+  --preview-surface: var(--preview-system-surface);
+}
+.appearance-preview > i {
+  width: 22%;
+  background: var(--preview-surface);
+  border-right: 1px solid var(--control-border);
+}
+.appearance-preview > span {
+  display: grid;
+  gap: 5px;
+  padding: 10px;
+  flex: 1;
+}
+.appearance-preview b {
+  background: var(--preview-surface);
+  border-radius: 3px;
+}
+.appearance-preview b:first-child {
+  background: var(--chart-primary);
+}
+@media (max-width: 599px) {
+  .appearance-themes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

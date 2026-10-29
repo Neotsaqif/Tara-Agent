@@ -12,11 +12,21 @@
   z-index: 20;
   width: 232px;
   padding: 20px;
-  background: white;
+  background: var(--surface);
   display: flex;
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
+  border-right: 1px solid var(--border);
+}
+:root[data-sidebar-position="right"] .sidebar {
+  inset: 0 0 0 auto;
+  border-right: 0;
+  border-left: 1px solid var(--border);
+}
+:root[data-sidebar-position="right"] .main-shell {
+  margin-left: 0;
+  margin-right: 232px;
 }
 .brand {
   display: flex;
@@ -60,15 +70,18 @@
   background: var(--tint);
   text-decoration: none;
 }
-.sidebar > nav,
 .sidebar > .brand,
 .sidebar > .brand-caption,
 .sidebar-bottom {
   flex-shrink: 0;
 }
-.sidebar > .chat-history-prototype {
-  min-height: 0;
+.sidebar-navigation-scroll {
+  min-height: 140px;
   overflow-y: auto;
+  flex: 1 0 140px;
+  scrollbar-width: thin;
+  padding: 4px;
+  margin: -4px;
 }
 .sidebar-bottom {
   margin-top: auto;
@@ -105,8 +118,8 @@
   width: 32px;
   height: 32px;
   flex-shrink: 0;
-  background: var(--navy);
-  color: white;
+  background: var(--inverse-surface);
+  color: var(--inverse-text);
   border-radius: 8px;
   font-size: 12px;
   font-weight: 600;
@@ -129,7 +142,7 @@
 .topbar {
   min-height: 84px;
   padding: 20px 32px;
-  background: white;
+  background: var(--surface);
   display: flex;
   align-items: center;
   gap: 20px;
@@ -156,6 +169,7 @@
   margin-inline: auto;
 }
 
+.drawer-close,
 .menu-toggle,
 .nav-backdrop {
   display: none;
@@ -175,7 +189,7 @@
   top: -80px;
   left: 16px;
   padding: 12px;
-  background: white;
+  background: var(--surface);
   border: 2px solid var(--primary);
 }
 .skip-link:focus {
@@ -205,21 +219,32 @@
     visibility: hidden;
     transition: transform 150ms;
   }
-  .sidebar.open {
+  :root[data-sidebar-position="right"] .sidebar {
+    transform: translateX(100%);
+  }
+  .sidebar.open,
+  :root[data-sidebar-position="right"] .sidebar.open {
     transform: translateX(0);
     visibility: visible;
   }
-  .main-shell {
-    margin-left: 0;
+  .main-shell,
+  :root[data-sidebar-position="right"] .main-shell {
+    margin-inline: 0;
   }
-  .menu-toggle {
+  .menu-toggle,
+  .drawer-close {
     display: inline-flex;
+  }
+  .drawer-close {
+    align-self: flex-end;
+    flex-shrink: 0;
+    font-size: 24px;
   }
   .nav-backdrop {
     display: block;
     position: fixed;
     inset: 0;
-    background: #10182866;
+    background: var(--backdrop);
     border: 0;
     z-index: 19;
   }

@@ -78,7 +78,7 @@ export function SelectionBubble({
                 {isExpanded && (
                   <div
                     id={`rationale-content-${item.id}`}
-                    className="caption muted p-2 mt-2 bg-light rounded"
+                    className="caption muted p-2 mt-2 rationale-surface rounded"
                     role="region"
                     aria-label={`Alasan rekomendasi ${item.id}`}
                   >

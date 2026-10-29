@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import type { Mode } from "../App";
+import AppearanceSettings from "../components/AppearanceSettings";
 import {
   Button,
   Card,
@@ -26,6 +27,7 @@ const sections = [
   "Notifikasi",
   "Pengguna & akses",
   "Preferensi AI",
+  "Tampilan",
 ];
 const risks = [
   { title: "Konservatif", description: "Jaga margin dan batasi risiko." },
@@ -116,8 +118,9 @@ function SettingsForm({ mode }: { mode: Mode }) {
         </Button>
       </PageHeading>
       <Notice>
-        Pratinjau lokal saja. Pengaturan belum dimuat dari server dan perubahan
-        tidak disimpan. Integrasi serta pengelolaan akses memerlukan API dan
+        Pengaturan bisnis hanya pratinjau lokal dan tidak disimpan ke server.
+        Preferensi Tampilan langsung disimpan pada browser ini jika penyimpanan
+        tersedia. Integrasi serta pengelolaan akses memerlukan API dan
         autentikasi.
       </Notice>
       <div className="secondary-settings-layout">
@@ -348,6 +351,12 @@ function SettingsForm({ mode }: { mode: Mode }) {
                 dijalankan. Pilihan di sini hanya mengubah pratinjau lokal.
               </p>
             </Card>
+          </div>
+          <div
+            id={`${formId}-section-5`}
+            className="secondary-settings-section"
+          >
+            <AppearanceSettings />
           </div>
         </form>
       </div>

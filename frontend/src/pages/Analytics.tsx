@@ -322,7 +322,7 @@ export default function Analytics({ mode }: { mode: Mode }) {
                             style={{
                               width: `${item.margin}%`,
                               background:
-                                item.margin < 40 ? "#f59e0b" : undefined,
+                                item.margin < 40 ? "var(--warning)" : undefined,
                             }}
                           />
                         </span>

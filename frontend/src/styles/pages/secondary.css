@@ -5,7 +5,7 @@
   width: min(620px, calc(100% - 32px));
 }
 .secondary-page .modal::backdrop {
-  background: #1018283d;
+  background: color-mix(in srgb, var(--backdrop) 60%, transparent);
 }
 .memory-page .modal .secondary-memory-meta {
   font-size: 12px;
@@ -21,8 +21,8 @@
   padding: 20px;
   border: 1px solid var(--border);
   border-radius: 12px;
-  background: white;
-  box-shadow: 0 4px 16px #1018281a;
+  background: var(--surface);
+  box-shadow: 0 4px 16px var(--shadow);
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
@@ -35,8 +35,8 @@
   border-radius: 8px;
 }
 .secondary-toast.success {
-  color: #15803d;
-  border-color: #16a34a;
+  color: var(--success);
+  border-color: var(--success);
 }
 .secondary-toast.connecting {
   color: var(--primary);
@@ -103,7 +103,7 @@
   min-height: 44px;
   min-width: 100px;
   padding: 12px 20px;
-  background: white;
+  background: var(--surface);
   border: 0;
   border-radius: 8px;
   color: var(--muted);
@@ -319,7 +319,7 @@
   padding: 25.745px;
   border: 1px solid var(--border);
   border-radius: 13px;
-  background: white;
+  background: var(--surface);
   text-align: left;
   display: flex;
   flex-direction: column;
@@ -362,7 +362,7 @@
   flex-direction: column;
   gap: 16px;
   border: 1px solid var(--border);
-  background: white;
+  background: var(--surface);
   border-radius: 12px;
   padding: 12px;
 }

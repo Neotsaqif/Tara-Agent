@@ -1,7 +1,7 @@
 :root {
   font-family: Inter, system-ui, sans-serif;
-  color: #101828;
-  background: #f7f8fa;
+  color: var(--text);
+  background: var(--canvas);
   font-synthesis: none;
   --canvas: #f7f8fa;
   --surface: #fff;
@@ -16,6 +16,31 @@
   --warning: #92400e;
   --soft-blue: #93c5fd;
   --blue-mid: #60a5fa;
+  --surface-muted: #f9fafb;
+  --primary-contrast: #fff;
+  --primary-hover: #1d4ed8;
+  --inverse-surface: #172554;
+  --inverse-text: #fff;
+  --success-bg: #f0fdf4;
+  --success-border: #bbf7d0;
+  --warning-bg: #fffbeb;
+  --warning-border: #fde68a;
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --focus-ring: #93c5fd;
+  --shadow: rgb(16 24 40 / 8%);
+  --backdrop: rgb(16 24 40 / 40%);
+  --chart-grid: #eef0f3;
+  --control-border: #98a2b3;
+  --chart-primary: #2563eb;
+  --chart-secondary: #172554;
+  --preview-light-bg: #f7f8fa;
+  --preview-light-surface: #fff;
+  --preview-dark-bg: #111318;
+  --preview-dark-surface: #262c36;
+  --preview-gray-bg: #e5e7eb;
+  --preview-gray-surface: #f9fafb;
+  --preview-system-surface: #7c899e;
   --space-4: 4px;
   --space-8: 8px;
   --space-12: 12px;
@@ -28,4 +53,62 @@
   --radius-card: 12px;
   font-size: 14px;
   line-height: 1.45;
+}
+
+:root[data-theme="gray"] {
+  --muted: #515d70;
+  --primary: #1d4ed8;
+  --canvas: #e5e7eb;
+  --surface: #f9fafb;
+  --surface-muted: #f0f1f3;
+  --border: #cdd1d8;
+  --chart-grid: #d1d5db;
+}
+:root[data-theme="dark"] {
+  --canvas: #111318;
+  --surface: #1c2028;
+  --surface-muted: #262c36;
+  --border: #414b5c;
+  --control-border: #7c899e;
+  --text: #f3f4f6;
+  --muted: #b2bdcf;
+  --primary: #93b7ff;
+  --primary-contrast: #111b32;
+  --primary-hover: #b3ccff;
+  --navy: #bfceff;
+  --tint: #22334f;
+  --success: #86efac;
+  --success-bg: #163528;
+  --success-border: #377e53;
+  --warning: #fcd68b;
+  --warning-bg: #3c2d17;
+  --warning-border: #987344;
+  --danger: #ffabab;
+  --danger-bg: #422429;
+  --danger-border: #a75f66;
+  --focus-ring: #b3ccff;
+  --shadow: rgb(0 0 0 / 30%);
+  --backdrop: rgb(0 0 0 / 65%);
+  --chart-grid: #414b5c;
+  --chart-primary: #93b7ff;
+  --chart-secondary: #bfceff;
+}
+:root {
+  --bs-body-bg: var(--canvas);
+  --bs-body-color: var(--text);
+  --bs-secondary-color: var(--muted);
+  --bs-tertiary-bg: var(--surface-muted);
+  --bs-border-color: var(--border);
+  --bs-primary: var(--primary);
+  --bs-light-rgb: 249, 250, 251;
+}
+:root[data-theme="dark"] {
+  --bs-light-rgb: 38, 44, 54;
+}
+.themed-icon {
+  display: inline-block;
+  background-color: currentColor;
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
 }

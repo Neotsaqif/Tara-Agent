@@ -15,10 +15,10 @@
   width: fit-content;
   max-width: min(704px, 90%);
   min-width: 0;
-  background: var(--navy);
+  background: var(--inverse-surface);
   border-radius: 12px;
   padding: 20px;
-  color: white;
+  color: var(--inverse-text);
   font-size: 15px;
   line-height: 22px;
   overflow-wrap: anywhere;
@@ -41,7 +41,7 @@
 }
 .recommendation {
   border: 1px solid var(--border);
-  background: white;
+  background: var(--surface);
   border-radius: 12px;
   padding: 20px;
   display: flex;
@@ -77,8 +77,11 @@
   margin-top: 16px;
   font-size: 13px;
 }
+.rationale-surface {
+  background: var(--surface-muted);
+}
 .chat-composer {
-  background: white;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 16px;
@@ -124,12 +127,12 @@
 }
 .badge {
   padding: 8px 12px;
-  background: #fffbeb;
+  background: var(--warning-bg);
   border-radius: 8px;
   font-size: 12px;
 }
 .badge.success {
-  background: #f0fdf4;
+  background: var(--success-bg);
 }
 .flow-tabs {
   align-self: flex-start;

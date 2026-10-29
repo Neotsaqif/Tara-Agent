@@ -15,8 +15,14 @@ export function Icon({
   name: string;
   brand?: boolean;
 }) {
-  return (
-    <img className={brand ? "brand-icon" : "icon"} src={asset(name)} alt="" />
+  return brand ? (
+    <img className="brand-icon" src={asset(name)} alt="" />
+  ) : (
+    <span
+      className="icon themed-icon"
+      aria-hidden="true"
+      style={{ maskImage: `url("${asset(name)}")` }}
+    />
   );
 }
 export function Button({
