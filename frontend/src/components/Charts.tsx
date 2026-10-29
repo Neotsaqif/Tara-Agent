@@ -52,9 +52,12 @@ export function LineChart({
           ))}
         </div>
         <div className="series-area">
-          <img
-            src={asset(series)}
+          <span
+            role="img"
+            aria-label="Tren ilustrasi dari desain Figma"
+            className="chart-series"
             style={{
+              maskImage: `url("${asset(series)}")`,
               height:
                 series === "PrimarySeries"
                   ? 82.44
@@ -62,16 +65,16 @@ export function LineChart({
                     ? 124.45
                     : 101.23,
             }}
-            alt="Tren ilustrasi dari desain Figma"
           />
           {secondary && (
-            <img
-              className="secondary-series"
+            <span
+              role="img"
+              aria-label="Nilai acuan ilustrasi"
+              className="chart-series secondary-series"
               style={{
+                maskImage: `url("${asset(secondary)}")`,
                 height: secondary.startsWith("Simulation") ? 109.05 : 110.29,
               }}
-              src={asset(secondary)}
-              alt="Nilai acuan ilustrasi"
             />
           )}
         </div>

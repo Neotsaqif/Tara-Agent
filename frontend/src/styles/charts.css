@@ -38,17 +38,21 @@
   top: 8px;
   height: 154px;
 }
-.series-area > img {
+.series-area > .chart-series {
   position: absolute;
   width: 100%;
   height: auto;
   inset: auto 0 0;
+  background: var(--chart-primary);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
 }
-.overview-line .series-area > img {
+.overview-line .series-area > .chart-series {
   top: 9px;
   bottom: auto;
 }
 .series-area .secondary-series {
+  background: var(--muted);
   z-index: 0;
 }
 .chart-ticks {
@@ -73,7 +77,7 @@
   border-radius: 8px;
 }
 .chart-hitpoints button:hover {
-  background: #2563eb08;
+  background: color-mix(in srgb, var(--chart-primary) 3%, transparent);
 }
 .chart-tooltip {
   position: absolute;
@@ -83,9 +87,9 @@
   padding: 10px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: white;
+  background: var(--surface);
   font-size: 11px;
-  box-shadow: 0 4px 12px #10182816;
+  box-shadow: 0 4px 12px var(--shadow);
   pointer-events: none;
   display: flex;
   flex-direction: column;
