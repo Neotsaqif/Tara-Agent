@@ -17,6 +17,16 @@
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
+  border-right: 1px solid var(--border);
+}
+:root[data-sidebar-position="right"] .sidebar {
+  inset: 0 0 0 auto;
+  border-right: 0;
+  border-left: 1px solid var(--border);
+}
+:root[data-sidebar-position="right"] .main-shell {
+  margin-left: 0;
+  margin-right: 232px;
 }
 .brand {
   display: flex;
@@ -209,8 +219,9 @@
     transform: translateX(0);
     visibility: visible;
   }
-  .main-shell {
-    margin-left: 0;
+  .main-shell,
+  :root[data-sidebar-position="right"] .main-shell {
+    margin-inline: 0;
   }
   .menu-toggle {
     display: inline-flex;
