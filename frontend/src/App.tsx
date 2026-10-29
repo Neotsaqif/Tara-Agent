@@ -59,7 +59,7 @@ export function Workspace({
     const trigger = menuButton.current;
     document.body.style.overflow = "hidden";
     if (background) background.inert = true;
-    sidebar.current?.querySelector<HTMLAnchorElement>("a")?.focus();
+    sidebar.current?.querySelector<HTMLButtonElement>(".drawer-close")?.focus();
     const keyboard = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -140,6 +140,8 @@ export function Workspace({
         className={`sidebar ${menu ? "open" : ""}`}
         id="workspace-navigation"
         aria-label="Navigasi ruang kerja"
+        role={menu ? "dialog" : undefined}
+        aria-modal={menu || undefined}
         onClick={(event) => {
           if ((event.target as HTMLElement).closest("a")) {
             setMenu(false);
@@ -149,6 +151,13 @@ export function Workspace({
           }
         }}
       >
+        <button
+          className="icon-button drawer-close"
+          aria-label="Tutup panel navigasi"
+          onClick={() => setMenu(false)}
+        >
+          <span aria-hidden="true">×</span>
+        </button>
         <a className="brand" href="#overview">
           <Icon name="IconSpark1" brand />
           <span>Command</span>
