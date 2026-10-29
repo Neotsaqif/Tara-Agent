@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "../ui";
+import { Chevron } from "../Chevron";
 import type { SelectionMessage } from "./types";
 
 export function SelectionBubble({
@@ -63,7 +64,7 @@ export function SelectionBubble({
               <div className="rationale-toggle-area">
                 <button
                   type="button"
-                  className="text-button caption"
+                  className="text-button caption disclosure-toggle"
                   onClick={() => {
                     toggleRationale(item.id);
                     onViewRationale?.(item.id);
@@ -71,7 +72,8 @@ export function SelectionBubble({
                   aria-expanded={isExpanded}
                   aria-controls={`rationale-content-${item.id}`}
                 >
-                  {isExpanded ? "Tutup alasan ⌃" : "Lihat alasan ⌄"}
+                  <span>{isExpanded ? "Tutup alasan" : "Lihat alasan"}</span>
+                  <Chevron />
                 </button>
                 {isExpanded && (
                   <div
@@ -113,8 +115,9 @@ export function SelectionBubble({
       {message.rationaleTitle && message.rationale && (
         <div className="card mt-3">
           <details open>
-            <summary className="cursor-pointer">
-              <strong>{message.rationaleTitle} ⌄</strong>
+            <summary className="disclosure-toggle">
+              <strong>{message.rationaleTitle}</strong>
+              <Chevron />
             </summary>
             <p className="muted rationale-copy mt-2">{message.rationale}</p>
           </details>

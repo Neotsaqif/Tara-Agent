@@ -76,7 +76,7 @@ describe("SelectionBubble", () => {
     render(<SelectionBubble message={mockMessage} />);
 
     const toggleBtns = screen.getAllByRole("button", {
-      name: "Lihat alasan ⌄",
+      name: "Lihat alasan",
     });
     const firstToggle = toggleBtns[0];
 
@@ -88,7 +88,7 @@ describe("SelectionBubble", () => {
     await user.keyboard("{Enter}");
 
     expect(firstToggle).toHaveAttribute("aria-expanded", "true");
-    expect(firstToggle).toHaveTextContent("Tutup alasan ⌃");
+    expect(firstToggle).toHaveTextContent("Tutup alasan");
     const region = screen.getByRole("region", {
       name: "Alasan rekomendasi A",
     });
@@ -109,7 +109,7 @@ describe("SelectionBubble", () => {
     render(<SelectionBubble message={mockMessage} />);
 
     const toggleBtns = screen.getAllByRole("button", {
-      name: "Lihat alasan ⌄",
+      name: "Lihat alasan",
     });
     // Click option C toggle
     await user.click(toggleBtns[2]);
@@ -149,7 +149,7 @@ describe("SelectionBubble", () => {
 
   it("renders global rationale summary with details tag", () => {
     render(<SelectionBubble message={mockMessage} />);
-    expect(screen.getByText("Mengapa A unggul ⌄")).toBeInTheDocument();
+    expect(screen.getByText("Mengapa A unggul")).toBeInTheDocument();
     expect(
       screen.getByText("Bukti historis mendukung paket kopi"),
     ).toBeInTheDocument();

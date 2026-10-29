@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Chevron } from "./Chevron";
 import type { Mode } from "../App";
 import { chatFixtures, chatHref, type ChatContext } from "../data/chat-demo";
 import "../styles/pages/chat-prototype.css";
@@ -51,16 +52,42 @@ export default function ChatHistory({ mode }: { mode: Mode }) {
         + Chat baru
       </a>
       <details className="conversation-history" open>
-        <summary>Percakapan</summary>
+        <summary className="disclosure-toggle">
+          <Chevron />
+          <span>Percakapan</span>
+        </summary>
         {mode === "demo" ? (
           <>
             <label className="chat-history-search">
               <span className="sr-only">Cari chat</span>
+              <svg
+                className="chat-search-icon"
+                width="16"
+                height="16"
+                viewBox="0 0 20 20"
+                fill="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <circle
+                  cx="8.5"
+                  cy="8.5"
+                  r="5.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <path
+                  d="m13 13 4 4"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
               <input
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="⌕ Cari chat"
+                placeholder="Cari chat"
               />
             </label>
             <p className="chat-history-note">

@@ -359,7 +359,7 @@ for (const width of widths) {
       await closeDialog(page);
       await navigate(page, "chat");
       await page
-        .getByRole("button", { name: "Lihat alasan ⌄", exact: true })
+        .getByRole("button", { name: "Lihat alasan", exact: true })
         .first()
         .click();
       await accessible(page);

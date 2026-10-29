@@ -67,7 +67,7 @@ describe("Chat local and demo boundaries", () => {
       screen.getByText(/Pelanggan sesekali punya potensi pertumbuhan terbesar/),
     ).toBeInTheDocument();
     await user.click(
-      screen.getAllByRole("button", { name: "Lihat alasan ⌄" })[0],
+      screen.getAllByRole("button", { name: "Lihat alasan" })[0],
     );
     expect(
       within(screen.getByRole("dialog")).getByText(
