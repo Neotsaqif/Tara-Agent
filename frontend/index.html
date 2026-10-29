@@ -8,6 +8,29 @@
       content="TARA AGENT — Business Reasoning & Value Acceleration Agent"
     />
     <title>TARA AGENT</title>
+    <script>
+      // Apply before the app/CSS loads; keep validation aligned with appearance.ts.
+      (() => {
+        let preference = {};
+        try {
+          preference =
+            JSON.parse(localStorage.getItem("tara.appearance.v1")) || {};
+        } catch {
+          // Browser storage may be unavailable.
+        }
+        const theme = ["light", "dark", "gray"].includes(preference.theme)
+          ? preference.theme
+          : matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
+        const root = document.documentElement;
+        root.dataset.theme = theme;
+        root.dataset.bsTheme = theme === "dark" ? "dark" : "light";
+        root.dataset.sidebarPosition =
+          preference.sidebarPosition === "right" ? "right" : "left";
+        root.style.colorScheme = theme === "dark" ? "dark" : "light";
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

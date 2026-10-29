@@ -17,6 +17,7 @@ import { setDemoSchedule } from "./state/demo-session";
 import Analytics from "./pages/Analytics";
 import Memory from "./pages/Memory";
 import Settings from "./pages/Settings";
+import { useAppearance } from "./state/appearance";
 import DecisionSandbox, { HealthStatus } from "./components/ApiFoundation";
 
 const icons = [
@@ -46,6 +47,7 @@ export function Workspace({
   mode: Mode;
   setMode: (mode: Mode) => void;
 }) {
+  useAppearance();
   const [menu, setMenu] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const sidebar = useRef<HTMLElement>(null);

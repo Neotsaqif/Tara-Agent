@@ -1,7 +1,7 @@
 :root {
   font-family: Inter, system-ui, sans-serif;
-  color: #101828;
-  background: #f7f8fa;
+  color: var(--text);
+  background: var(--canvas);
   font-synthesis: none;
   --canvas: #f7f8fa;
   --surface: #fff;
@@ -16,6 +16,24 @@
   --warning: #92400e;
   --soft-blue: #93c5fd;
   --blue-mid: #60a5fa;
+  --surface-muted: #f9fafb;
+  --primary-contrast: #fff;
+  --primary-hover: #1d4ed8;
+  --inverse-surface: #172554;
+  --inverse-text: #fff;
+  --success-bg: #f0fdf4;
+  --success-border: #bbf7d0;
+  --warning-bg: #fffbeb;
+  --warning-border: #fde68a;
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --focus-ring: #93c5fd;
+  --shadow: rgb(16 24 40 / 8%);
+  --backdrop: rgb(16 24 40 / 40%);
+  --chart-grid: #eef0f3;
+  --control-border: #98a2b3;
+  --chart-primary: #2563eb;
+  --chart-secondary: #172554;
   --space-4: 4px;
   --space-8: 8px;
   --space-12: 12px;
