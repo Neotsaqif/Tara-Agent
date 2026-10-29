@@ -11,13 +11,23 @@
   font-size: 18px;
 }
 .user-message {
-  width: min(704px, 100%);
+  align-self: flex-end;
+  width: fit-content;
+  max-width: min(704px, 90%);
+  min-width: 0;
   background: var(--navy);
   border-radius: 12px;
   padding: 20px;
   color: white;
   font-size: 15px;
   line-height: 22px;
+  overflow-wrap: anywhere;
+}
+.ai-message {
+  align-self: flex-start;
+  width: fit-content;
+  max-width: min(704px, 100%);
+  min-width: 0;
   overflow-wrap: anywhere;
 }
 .ai-name {

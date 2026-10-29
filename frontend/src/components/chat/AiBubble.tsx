@@ -3,7 +3,11 @@ import type { AiTextMessage } from "./types";
 export function AiBubble({ message }: { message: AiTextMessage }) {
   if (message.status === "loading") {
     return (
-      <div className="demo-thinking" role="status" aria-live="polite">
+      <div
+        className="ai-message demo-thinking"
+        role="status"
+        aria-live="polite"
+      >
         <strong className="ai-name">{message.label ?? "Command AI"} ···</strong>
         <p className="caption muted">{message.content}</p>
         <p className="caption muted">
@@ -16,7 +20,7 @@ export function AiBubble({ message }: { message: AiTextMessage }) {
   if (message.status === "error") {
     return (
       <div
-        className="notice error"
+        className="ai-message notice error"
         role="alert"
         aria-label="Kesalahan respons AI"
       >
@@ -30,7 +34,7 @@ export function AiBubble({ message }: { message: AiTextMessage }) {
 
   return (
     <div
-      className="stack"
+      className="ai-message stack"
       data-testid="ai-bubble"
       role="article"
       aria-label="Tanggapan AI"

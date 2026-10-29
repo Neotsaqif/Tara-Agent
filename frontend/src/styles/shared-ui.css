@@ -314,6 +314,35 @@ tbody th {
 .text-button:hover {
   text-decoration: underline;
 }
+.disclosure-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding-block: 8px;
+  border-radius: var(--radius-sm);
+  list-style: none;
+}
+.disclosure-toggle::-webkit-details-marker {
+  display: none;
+}
+.disclosure-chevron {
+  display: block;
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  transition: transform 150ms;
+}
+button.disclosure-toggle[aria-expanded="true"] > .disclosure-chevron,
+details[open] > .disclosure-toggle > .disclosure-chevron {
+  transform: rotate(180deg);
+}
+.conversation-history > .disclosure-toggle > .disclosure-chevron {
+  transform: rotate(-90deg);
+}
+.conversation-history[open] > .disclosure-toggle > .disclosure-chevron {
+  transform: rotate(0deg);
+}
 
 @media (max-width: 1199px) {
   .metrics {
