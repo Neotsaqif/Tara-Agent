@@ -98,7 +98,7 @@ function ChatView({
               }}
             />
             {thinking ? (
-              <div className="demo-thinking" role="status">
+              <div className="ai-message demo-thinking" role="status">
                 <strong className="ai-name">Command AI ···</strong>
                 <p className="caption muted">
                   Meninjau penjualan, margin, dan promo sebelumnya…
