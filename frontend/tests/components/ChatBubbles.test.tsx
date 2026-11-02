@@ -85,7 +85,7 @@ describe("ChatComposer", () => {
     const handleSubmit = vi.fn();
     render(<ChatComposer onSubmitDraft={handleSubmit} />);
 
-    const submitBtn = screen.getByRole("button", { name: "Simpan draft ↑" });
+    const submitBtn = screen.getByRole("button", { name: "Kirim pertanyaan ↑" });
     const textarea = screen.getByRole("textbox", {
       name: "Pertanyaan atau tujuan bisnis",
     });
@@ -99,7 +99,7 @@ describe("ChatComposer", () => {
     expect(submitBtn).toBeEnabled();
 
     await user.click(submitBtn);
-    expect(handleSubmit).toHaveBeenCalledWith("Pertanyaan baru");
+    await vi.waitFor(() => expect(handleSubmit).toHaveBeenCalledWith("Pertanyaan baru"));
     expect(textarea).toHaveValue("");
     expect(submitBtn).toBeDisabled();
   });
@@ -112,7 +112,7 @@ describe("ChatComposer", () => {
     const textarea = screen.getByRole("textbox", {
       name: "Pertanyaan atau tujuan bisnis",
     });
-    const submitBtn = screen.getByRole("button", { name: "Simpan draft ↑" });
+    const submitBtn = screen.getByRole("button", { name: "Kirim pertanyaan ↑" });
 
     await user.type(textarea, "Satu pesan");
     await user.click(submitBtn);

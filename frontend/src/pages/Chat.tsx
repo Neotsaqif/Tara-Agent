@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import { sendChatMessage, responseToMessage } from "../services/chat-adapter";
+import { useAuth } from "../state/auth";
+import LoginPanel from "../components/LoginPanel";
+import type { ChatMessage } from "../components/chat/types";
 import type { Mode } from "../App";
 import { Button, Icon, Modal, Notice, PageHeading } from "../components/ui";
 import {
@@ -53,9 +57,13 @@ function ChatView({
   const [objective, setObjective] = useState("");
   const [message, setMessage] = useState("");
   const [thinking, setThinking] = useState(false);
+  const [liveMessages, setLiveMessages] = useState<ChatMessage[]>([]);
+  const [conversationId, setConversationId] = useState<string>();
+  const [liveError, setLiveError] = useState("");
   const [rationale, setRationale] = useState<string | null>(null);
   const [contextOpen, setContextOpen] = useState(false);
   const [nextContext, setNextContext] = useState<ChatContext>(route.context);
+  const auth = useAuth();
   const option = recommendations.find((item) => item.id === rationale);
   useEffect(() => {
     if (!thinking) return;
@@ -157,42 +165,46 @@ function ChatView({
             )}
           </>
         ) : (
-          <Notice>
-            API percakapan, diagnosis, dan rekomendasi belum tersedia.
-            Pertanyaan di bawah hanya menjadi draft lokal; tidak dikirim ke LLM
-            atau disimpan di server.
-          </Notice>
+          <>
+            {auth.status !== "authenticated" ? (
+              <LoginPanel onSignIn={async (email, password) => { await auth.signIn(email, password); }} />
+            ) : (
+              <>
+                <Notice>Mode API nyata · masuk sebagai {auth.principal?.email} ({auth.principal?.roles.join(", ")}) · pertanyaan dikirim ke `/api/v1/agent/chat`. Streaming belum aktif.</Notice>
+                {liveMessages.map((item) => item.type === "user" ? <UserBubble key={item.id} message={item} /> : item.type === "ai_text" ? <AiBubble key={item.id} message={item} /> : null)}
+                {liveError && <Notice tone="error">{liveError}</Notice>}
+              </>
+            )}
+          </>
         )}
-        {objective && (
-          <UserBubble
-            message={{
-              type: "user",
-              id: "local-draft",
-              content: objective,
-              isDraft: true,
-            }}
-          />
+        {objective && mode === "demo" && (
+          <UserBubble message={{ type: "user", id: "local-draft", content: objective, isDraft: true }} />
         )}
         {message && <Notice>{message}</Notice>}
         <ChatComposer
-          onSubmitDraft={(submittedDraft) => {
-            setObjective(submittedDraft);
-            setMessage(
-              "Draft tersedia selama halaman ini terbuka. API chat belum tersedia; tidak ada jawaban AI atau rekomendasi baru yang dibuat.",
-            );
+          submitLabel={mode === "live" ? "Kirim pertanyaan ↑" : "Simpan draft ↑"}
+          onSubmitDraft={async (submittedDraft) => {
+            if (mode === "demo") {
+              setObjective(submittedDraft);
+              setMessage("Draft lokal: " + submittedDraft);
+              return;
+            }
+            setLiveError("");
+            setLiveMessages((current) => [...current, { type: "user", id: crypto.randomUUID(), content: submittedDraft }]);
+            try {
+              const response = await sendChatMessage({ conversation_id: conversationId, message: submittedDraft, workflow: "auto" }, { token: auth.accessToken });
+              setConversationId(response.conversation_id);
+              setLiveMessages((current) => [...current, responseToMessage(response)]);
+            } catch (error) {
+              setLiveError(error instanceof Error ? error.message : "Gagal memproses pertanyaan.");
+            }
           }}
           onAddContext={() => {
             if (mode === "demo") setContextOpen(true);
             else
-              setMessage(
-                "Konteks outlet, periode, dan data transaksi belum dapat dilampirkan karena API konteks belum tersedia.",
-              );
+              setMessage("Konteks outlet/periode akan dilampirkan saat session-aware context tersedia.");
           }}
-          contextHint={
-            mode === "demo"
-              ? "Semua outlet · 90 hari ilustrasi"
-              : "Belum ada data konteks"
-          }
+          contextHint={mode === "demo" ? "Semua outlet · 90 hari ilustrasi" : conversationId ? `Percakapan ${conversationId.slice(0, 8)}… · non-streaming` : "Belum ada percakapan aktif"}
         />
         {mode === "demo" && (
           <button
@@ -206,7 +218,7 @@ function ChatView({
         <p className="caption muted">
           {mode === "demo"
             ? "Demo / simulasi · Pilihan dan jadwal hanya contoh lokal. Tidak ada approval atau eksekusi bisnis melalui halaman ini."
-            : "Tidak ada approval atau eksekusi bisnis melalui halaman ini."}
+            : "Live mode · Jawaban dari backend. Streaming nonaktif; approval tetap memerlukan konfirmasi backend."}
         </p>
       </div>
       {option && (

@@ -1,23 +1,25 @@
 import { ApiError, API_BASE_URL } from "../api/client";
 import type { ChatMessage } from "../components/chat/types";
 
+export type Workflow = "auto" | "informational" | "diagnostic" | "goal_directed";
 export type ChatRequest = {
-  conversationId?: string;
-  caseId?: string;
+  conversation_id?: string;
   message: string;
-  context?: {
-    outletId?: string;
-    dateRange?: string;
-  };
+  workflow?: Workflow;
 };
-
 export type ChatApiResponse = {
-  conversationId: string;
-  caseId?: string;
-  message: ChatMessage;
-  timestamp: string;
+  conversation_id: string;
+  session_id: string;
+  workflow: Exclude<Workflow, "auto">;
+  status: string;
+  answer: string;
+  evidence: string[];
+  assumptions: string[];
+  limitations: string[];
+  needs_approval: boolean;
+  available_actions: string[];
+  provider: string;
 };
-
 export type ChatAdapterCapabilities = {
   hasChatEndpoint: boolean;
   hasStreaming: boolean;
@@ -25,75 +27,67 @@ export type ChatAdapterCapabilities = {
   hasAuth: boolean;
 };
 
-/**
- * Checks whether the backend supports real Chat AI endpoints.
- * Currently returns false because only health and workflow decision sandboxes exist.
- */
 export function getChatCapabilities(): ChatAdapterCapabilities {
-  return {
-    hasChatEndpoint: false,
-    hasStreaming: false,
-    hasPersistence: false,
-    hasAuth: false,
-  };
+  return { hasChatEndpoint: true, hasStreaming: false, hasPersistence: true, hasAuth: true };
 }
 
-/**
- * Send a chat request to the backend.
- * Aborts on timeout (default 8s) or caller signal.
- * Fails closed when backend endpoints are unavailable, rather than silently falling back to mock data.
- */
+function isChatResponse(value: unknown): value is ChatApiResponse {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const item = value as Record<string, unknown>;
+  return typeof item.conversation_id === "string" && typeof item.session_id === "string" && typeof item.workflow === "string" &&
+    typeof item.status === "string" && typeof item.answer === "string" &&
+    Array.isArray(item.evidence) && Array.isArray(item.assumptions) &&
+    Array.isArray(item.limitations) && typeof item.needs_approval === "boolean" &&
+    Array.isArray(item.available_actions) && typeof item.provider === "string";
+}
+
 export async function sendChatMessage(
   request: ChatRequest,
-  options?: {
-    signal?: AbortSignal;
-    timeoutMs?: number;
-  },
+  options?: { signal?: AbortSignal; timeoutMs?: number; token?: string | null },
 ): Promise<ChatApiResponse> {
-  const capabilities = getChatCapabilities();
-  if (!capabilities.hasChatEndpoint) {
-    throw new ApiError(
-      501,
-      "API chat bisnis belum tersedia di server. Pertanyaan tidak dapat diproses oleh LLM nyata.",
-    );
-  }
-
-  const timeoutMs = options?.timeoutMs ?? 8000;
+  const message = request.message.trim();
+  if (!message) throw new ApiError(422, "Pertanyaan tidak boleh kosong.");
+  const token = options?.token ?? null;
+  if (!token) throw new ApiError(401, "Sesi tidak aktif. Masuk untuk menggunakan chat API nyata.");
+  const timeoutMs = options?.timeoutMs ?? 30000;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-  const signal = options?.signal
-    ? AbortSignal.any([options.signal, controller.signal])
-    : controller.signal;
-
+  const signal = options?.signal ? AbortSignal.any([options.signal, controller.signal]) : controller.signal;
   try {
-    const response = await fetch(`${API_BASE_URL}/api/v1/chat`, {
+    const response = await fetch(`${API_BASE_URL}/api/v1/agent/chat`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(request),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...request, message }),
       signal,
     });
-
-    clearTimeout(timeoutId);
-
+    const data: unknown = await response.json().catch(() => null);
     if (!response.ok) {
-      throw new ApiError(
-        response.status,
-        `Panggilan chat gagal dengan status ${response.status}`,
-      );
+      const statusMessage = response.status === 401 ? "Sesi kedaluwarsa. Masuk ulang untuk melanjutkan." :
+        response.status === 403 ? "Akses ditolak untuk peran ini." :
+        response.status === 503 ? "Layanan AI sedang tidak tersedia." :
+        response.status === 422 ? "Format pertanyaan tidak valid." : `Panggilan chat gagal (${response.status}).`;
+      throw new ApiError(response.status, statusMessage);
     }
-
-    const data = (await response.json()) as ChatApiResponse;
+    if (!isChatResponse(data)) throw new ApiError(response.status, "Format respons chat tidak sesuai kontrak.");
     return data;
   } catch (error) {
-    clearTimeout(timeoutId);
     if (error instanceof ApiError) throw error;
-    if (signal.aborted) {
-      throw new ApiError(
-        408,
-        "Permintaan chat melampaui batas waktu (timeout).",
-      );
-    }
+    if (signal.aborted) throw new ApiError(408, "Permintaan chat melewati batas waktu.");
     throw new ApiError(0, "Gagal terhubung ke layanan chat backend.");
+  } finally {
+    clearTimeout(timeoutId);
   }
+}
+
+export function responseToMessage(response: ChatApiResponse): ChatMessage {
+  const details = [
+    response.evidence.length ? `Evidence: ${response.evidence.join("; ")}` : "",
+    response.assumptions.length ? `Asumsi: ${response.assumptions.join("; ")}` : "",
+    response.limitations.length ? `Keterbatasan: ${response.limitations.join("; ")}` : "",
+  ].filter(Boolean).join("\n");
+  return { type: "ai_text", id: crypto.randomUUID(), content: details ? `${response.answer}\n\n${details}` : response.answer, label: `TARA AGENT · ${response.provider}` };
 }

@@ -9,19 +9,27 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllGlobals());
 describe("workspace isolation", () => {
-  it("clears local chat drafts across a mode cycle", async () => {
+  it("clears live chat state across a mode cycle", async () => {
+    const fetchMock = vi.fn<typeof fetch>();
+    fetchMock.mockResolvedValue({
+      ok: true, status: 200,
+      json: vi.fn().mockResolvedValue({
+        session_id: "s1", workflow: "informational", status: "completed",
+        answer: "Jawaban live.", evidence: [], assumptions: [],
+        limitations: [], needs_approval: false, available_actions: [], provider: "mock",
+      }),
+    } as unknown as Response);
+    vi.stubGlobal("fetch", fetchMock);
     const user = userEvent.setup();
     render(<App />);
     await user.type(
       screen.getByRole("textbox", { name: "Pertanyaan atau tujuan bisnis" }),
-      "Draft rahasia lokal",
+      "Pertanyaan live",
     );
-    await user.click(screen.getByRole("button", { name: "Simpan draft ↑" }));
+    await user.click(screen.getByRole("button", { name: "Kirim pertanyaan ↑" }));
     await user.click(screen.getByRole("button", { name: "Demo Figma" }));
     await user.click(screen.getByRole("button", { name: "API nyata" }));
-    expect(
-      screen.queryByText("Draft lokal: Draft rahasia lokal"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("Jawaban live.")).not.toBeInTheDocument();
   });
   it("handles invalid routes instead of rendering overview", () => {
     history.replaceState(null, "", "#monitoring/unknown");

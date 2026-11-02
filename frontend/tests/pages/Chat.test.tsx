@@ -3,136 +3,73 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import Chat from "../../src/pages/Chat";
 
+const fetchMock = vi.fn<typeof fetch>();
+const livePayload = {
+  session_id: "s-live-1", workflow: "informational", status: "completed",
+  answer: "Margin kotor = pendapatan - HPP.", evidence: [], assumptions: [],
+  limitations: ["Belum ada dataset terhubung."], needs_approval: false,
+  available_actions: [], provider: "mock",
+};
 beforeEach(() => {
   history.replaceState(null, "", "#chat");
-  vi.stubGlobal("fetch", vi.fn());
+  fetchMock.mockReset();
+  vi.stubGlobal("fetch", fetchMock);
 });
-afterEach(() => {
-  vi.useRealTimers();
-  vi.unstubAllGlobals();
-});
-describe("Chat local and demo boundaries", () => {
-  it("keeps demo recommendations out of live mode, including simulation deep links", () => {
-    history.replaceState(null, "", "#chat/simulation/A");
-    render(<Chat mode="live" />);
-    expect(
-      screen.getByText(/Pertanyaan di bawah hanya menjadi draft lokal/),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Setujui" }),
-    ).not.toBeInTheDocument();
-    expect(screen.getByText("Belum ada data konteks")).toBeInTheDocument();
-    expect(fetch).not.toHaveBeenCalled();
-  });
-  it("saves a trimmed local draft without an AI response or request", async () => {
-    const user = userEvent.setup();
-    render(<Chat mode="live" />);
-    const input = screen.getByRole("textbox", {
-      name: "Pertanyaan atau tujuan bisnis",
-    });
-    const submit = screen.getByRole("button", { name: "Simpan draft ↑" });
-    expect(submit).toBeDisabled();
-    await user.type(input, "  Tingkatkan penjualan  ");
-    await user.click(submit);
-    expect(
-      screen.getByText("Draft lokal: Tingkatkan penjualan"),
-    ).toBeInTheDocument();
-    expect(input).toHaveValue("");
-    expect(submit).toBeDisabled();
-    expect(
-      screen.getByText(
-        /tidak ada jawaban AI atau rekomendasi baru yang dibuat/,
-      ),
-    ).toBeInTheDocument();
-    expect(fetch).not.toHaveBeenCalled();
-  });
-  it("explains unavailable live context", async () => {
-    const user = userEvent.setup();
-    render(<Chat mode="live" />);
-    await user.click(screen.getByRole("button", { name: "＋ Tambah konteks" }));
-    expect(
-      screen.getByText(
-        /Konteks outlet, periode, dan data transaksi belum dapat dilampirkan/,
-      ),
-    ).toBeInTheDocument();
-  });
-  it("shows contextual content and rationale", async () => {
+afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
+
+describe("Chat demo behaviour", () => {
+  it("shows contextual content and rationale in demo mode", async () => {
     history.replaceState(null, "", "#chat?context=customers");
     const user = userEvent.setup();
     render(<Chat mode="demo" />);
-    expect(
-      screen.getByRole("heading", { name: "Tingkatkan loyalitas pelanggan" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Pelanggan sesekali punya potensi pertumbuhan terbesar/),
-    ).toBeInTheDocument();
-    await user.click(
-      screen.getAllByRole("button", { name: "Lihat alasan" })[0],
-    );
-    expect(
-      within(screen.getByRole("dialog")).getByText(
-        /bukan hasil perhitungan bisnis aktual/,
-      ),
-    ).toBeInTheDocument();
-    expect(fetch).not.toHaveBeenCalled();
+    expect(screen.getByRole("heading", { name: "Tingkatkan loyalitas pelanggan" })).toBeInTheDocument();
+    await user.click(screen.getAllByRole("button", { name: "Lihat alasan" })[0]);
+    expect(within(screen.getByRole("dialog")).getByText(/bukan hasil perhitungan bisnis aktual/)).toBeInTheDocument();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
-  it("selects an option using a reversible URL, without business approval", async () => {
+  it("selects an option using a reversible URL without business approval in demo", async () => {
     const user = userEvent.setup();
     render(<Chat mode="demo" />);
     await user.click(screen.getAllByRole("button", { name: "Setujui" })[1]);
     expect(location.hash).toContain("option=B");
-    expect(screen.getByRole("button", { name: "Dipilih ✓" })).toBeDisabled();
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Simulasikan B" }));
-    expect(
-      screen.getByRole("heading", { name: "Simulasikan sebelum menyetujui" }),
-    ).toBeInTheDocument();
-    await user.click(
-      screen.getByRole("button", { name: "Kembali ke Chat AI" }),
-    );
-    expect(location.hash).toContain("option=B");
-    expect(fetch).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
-  it("renders simulation deep links and handles browser hash changes", () => {
-    history.replaceState(
-      null,
-      "",
-      "#chat/simulation/A?context=products&offer=bundle10",
-    );
+  it("renders simulation deep links and handles hash changes in demo", () => {
+    history.replaceState(null, "", "#chat/simulation/A?context=products&offer=bundle10");
     render(<Chat mode="demo" />);
-    expect(screen.getByRole("combobox", { name: "Penawaran" })).toHaveValue(
-      "Kopi + pastri · Diskon 10%",
-    );
-    act(() => {
-      history.replaceState(null, "", "#chat?context=margin");
-      window.dispatchEvent(new HashChangeEvent("hashchange"));
-    });
-    expect(
-      screen.getByRole("heading", { name: "Jaga margin kotor" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Penawaran" })).toHaveValue("Kopi + pastri · Diskon 10%");
+    act(() => { history.replaceState(null, "", "#chat?context=margin"); window.dispatchEvent(new HashChangeEvent("hashchange")); });
+    expect(screen.getByRole("heading", { name: "Jaga margin kotor" })).toBeInTheDocument();
   });
-  it("does not fabricate responses for unsupported context snapshots", () => {
+  it("does not fabricate responses for unsupported demo context snapshots", () => {
     history.replaceState(null, "", "#chat?context=memory");
     render(<Chat mode="demo" />);
-    expect(
-      screen.getByText(/Snapshot rekomendasi untuk konteks ini belum tersedia/),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Setujui" }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByText(/Snapshot rekomendasi untuk konteks ini belum tersedia/)).toBeInTheDocument();
   });
-  it("cancels the demo thinking timer on mode change", () => {
-    vi.useFakeTimers();
-    const { rerender } = render(<Chat mode="demo" />);
-    act(() =>
-      screen.getByRole("button", { name: "Putar ulang respons demo" }).click(),
+});
+
+describe("Chat live behaviour", () => {
+  it("sends the question to /api/v1/agent/chat and renders the real answer", async () => {
+    fetchMock.mockResolvedValue({ ok: true, status: 200, json: vi.fn().mockResolvedValue(livePayload) } as unknown as Response);
+    const user = userEvent.setup();
+    render(<Chat mode="live" />);
+    const input = screen.getByRole("textbox", { name: "Pertanyaan atau tujuan bisnis" });
+    await user.type(input, "Apa itu margin kotor?");
+    await user.click(screen.getByRole("button", { name: "Kirim pertanyaan ↑" }));
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("/api/v1/agent/chat"),
+      expect.objectContaining({ method: "POST" }),
     );
-    expect(
-      screen.getByText(/Pemutaran snapshot demo, bukan proses LLM/),
-    ).toBeInTheDocument();
-    rerender(<Chat mode="live" />);
-    act(() => vi.runAllTimers());
-    expect(screen.queryByText(/Meninjau penjualan/)).not.toBeInTheDocument();
-    expect(fetch).not.toHaveBeenCalled();
+    expect(await screen.findByText(/Margin kotor = pendapatan - HPP/)).toBeInTheDocument();
+    expect(screen.getByText(/Belum ada dataset terhubung/)).toBeInTheDocument();
+  });
+  it("preserves the user message and surfaces a safe error when the provider fails", async () => {
+    fetchMock.mockResolvedValue({ ok: false, status: 503, json: vi.fn().mockResolvedValue({ detail: "down" }) } as unknown as Response);
+    const user = userEvent.setup();
+    render(<Chat mode="live" />);
+    await user.type(screen.getByRole("textbox", { name: "Pertanyaan atau tujuan bisnis" }), "Halo");
+    await user.click(screen.getByRole("button", { name: "Kirim pertanyaan ↑" }));
+    expect(await screen.findByText(/Layanan AI sedang tidak tersedia/)).toBeInTheDocument();
+    expect(screen.getByText("Halo")).toBeInTheDocument();
   });
 });

@@ -166,6 +166,17 @@ input::placeholder,
 textarea::placeholder {
   color: var(--muted);
 }
+.login-panel {
+  max-width: 420px;
+}
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.login-form .button {
+  align-self: flex-start;
+}
 .notice {
   padding: 16px;
   border-radius: var(--radius);
